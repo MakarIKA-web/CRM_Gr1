@@ -1,0 +1,1 @@
+Her i sql-backup kommer til å ligge sql koden, som skal brukes til at alle har samme versjon av database
