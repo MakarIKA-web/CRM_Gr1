@@ -17,6 +17,6 @@ if ($conn->connect_error) {
 }
 
 // Fetch data from the database
-$sql = "SELECT * FROM kjaeledyr"; // SQL query to select all data from the 'elever' table
+$sql = "SELECT * FROM "; // SQL query to select all data from the 'elever' table
 $result = $conn->query($sql); // $result is the result set returned by the query
 ?>
