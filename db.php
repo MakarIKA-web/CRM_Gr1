@@ -17,6 +17,10 @@ if ($conn->connect_error) {
 }
 
 // Fetch data from the database
-$sql = "SELECT * FROM kunder"; // SQL query to select all data from the 'kunder' table
-$result = $conn->query($sql); // $result is the result set returned by the query
+$sqlkunder = "SELECT * FROM kunder"; // SQL query to select all data from the 'kunder' table
+// Fetch data from the database
+$sqlkontaktpersoner = "SELECT * FROM kontaktpersoner"; // SQL query to select all data from the 'kontaktpersoner' table
+
+$resultkunder = $conn->query($sqlkunder); // $result is the result set returned by the query
+$resultkontaktpersoner = $conn->query($sqlkontaktpersoner); // $result is the result set returned by the query
 ?>
