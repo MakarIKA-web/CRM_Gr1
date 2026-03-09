@@ -179,7 +179,7 @@ require_once "config.php";
             ?>
         </table>
 
-        <a href="add.php"><article style="margin: auto; max-width: 327.812px; margin-top: 2vh;">Legg til ny kunde</article></a>
+        <a href="add.php"><article style="margin: auto; max-width: 327.812px; margin-top: 2vh;">Legg til ny kontaktperson</article></a>
     </main>
 
 
