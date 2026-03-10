@@ -45,6 +45,11 @@ require_once "requests.php"; // <-- nå kjøres POST-koden
                     minlength="9" maxlength="9">
             </div>
 
+            <div class="field-group">
+                <label for="adresse">Adresse</label>
+                <input type="text" name="adresse" id="adresse" placeholder="F.eks. Storgata 1" required>
+            </div>
+
             <hr class="field-divider">
 
             <!-- KONTAKTPERSONER -->

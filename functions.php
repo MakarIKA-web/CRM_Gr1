@@ -5,12 +5,13 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
     $firmanavn = htmlspecialchars($data['firmanavn'] ?? '', ENT_QUOTES, 'UTF-8');
     $kundetype = htmlspecialchars($data['kundetype'] ?? '', ENT_QUOTES, 'UTF-8');
     $organisasjonsnummer = htmlspecialchars($data['organisasjonsnummer'] ?? '', ENT_QUOTES, 'UTF-8');
+    $adresse = htmlspecialchars($data['adresse'] ?? '', ENT_QUOTES, 'UTF-8');
 
     // 2. Sett inn kunden
-    $stmt = $conn->prepare("INSERT INTO kunder (kundetype, firmanavn, organisasjonsnummer) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO kunder (kundetype, firmanavn, organisasjonsnummer, adresse) VALUES (?, ?, ?, ?)");
     if (!$stmt) return "Feil i SQL-preparering: " . $conn->error;
 
-    $stmt->bind_param("sss", $kundetype, $firmanavn, $organisasjonsnummer);
+    $stmt->bind_param("ssss", $kundetype, $firmanavn, $organisasjonsnummer, $adresse);
     if (!$stmt->execute()) {
         $stmt->close();
         return "Feil ved innsetting av kunde: " . $stmt->error;
