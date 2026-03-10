@@ -1,1 +1,4 @@
-/* global */
+main {
+    max-width: fit-content;
+    margin: auto;
+}
