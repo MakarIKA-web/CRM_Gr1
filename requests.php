@@ -3,6 +3,10 @@
 require_once "config.php";      // For $conn
 require_once "functions.php";   // For leggTilKundeMedKontaktpersoner()
 
+// Debug: sjekk om skjemaet sender POST
+var_dump($_POST);
+exit();
+
 // Handle delete / edit / save / add requests
 $editing_id = null; // will be used when rendering the row as editable
 
@@ -64,9 +68,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = leggTilKundeMedKontaktpersoner($_POST, $conn);
 
         if ($result === true) {
-            $message = "Ny kunde og kontaktperson(er) lagt til!";
+            echo "<script>alert('Ny kunde og kontaktperson(er) lagt til!'); window.location='index.php';</script>";
         } else {
-            $message = $result; // Feilmelding
+            echo "<script>alert('Feil: " . addslashes($result) . "');</script>";
         }
     }
 }

@@ -1,5 +1,6 @@
 <?php
 require_once "config.php";
+require_once "requests.php"; // <-- nå kjøres POST-koden
 ?>
 
 <!DOCTYPE html>
@@ -8,7 +9,6 @@ require_once "config.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nytt Kunde</title>
-    <link rel="stylesheet" href="src/style.css">
 </head>
 <body class="form-page">
 
