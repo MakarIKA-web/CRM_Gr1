@@ -1,6 +1,5 @@
 <?php
 require_once "config.php";
-require_once "requests.php"; // <-- nå kjøres POST-koden
 ?>
 
 <!DOCTYPE html>
