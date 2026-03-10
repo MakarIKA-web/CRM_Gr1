@@ -64,7 +64,7 @@ require_once "config.php";
                                 <td>
                                     <form method='GET' action='delete.php'>
                                         <input type='hidden' name='id' value='" . $row['kunde_id'] . "'>
-                                        <button type='submit'>Slett</button>
+                                        <button type='submit' onclick=\"return confirm('Er du sikker på at du vil slette denne kunden?')\">Slett</button>
                                     </form>
                                 </td>
                                 <td>
@@ -155,7 +155,7 @@ require_once "config.php";
                                 <td>
                                     <form method='GET' action='delete.php'>
                                         <input type='hidden' name='kontakt_id' value='" . $row['kontakt_id'] . "'>
-                                        <button type='submit'>Slett</button>
+                                        <button type='submit' onclick=\"return confirm('Er du sikker på at du vil slette denne kontaktpersonen?')\">Slett</button>
                                     </form>
                                 </td>
                                 <td>
