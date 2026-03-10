@@ -1,7 +1,6 @@
 <?php
 // requests.php
 require_once "config.php";      // For $conn
-require_once "functions.php";   // For leggTilKundeMedKontaktpersoner()
 
 // Handle delete / edit / save / add requests
 $editing_id = null; // will be used when rendering the row as editable
