@@ -76,7 +76,7 @@ require_once "config.php";
                                     </form>
                                 </td>
                                 <td>
-                                    <form method='GET' action='edit.php'>
+                                    <form method='GET' action='redigerkunde.php'>
                                         <input type='hidden' name='id' value='{$row['kunde_id']}'>
                                         <button type='submit' class='btn btn-edit'>
                                             <svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg>
@@ -109,7 +109,7 @@ require_once "config.php";
         <!-- Database table -->
         <table id="kontaktpersonTable" style="margin: auto;">
             <!-- Table header -->
-            <tr><th>Kontakt id</th><th>Firmanavn</th><th>Fornavn</th><th>Etternavn</th><th>E-post</th><th>Stilling</th><th>Opprettet dato</th></tr>
+            <tr><th>Kontakt id</th><th>Firmanavn</th><th>Organisasjonsnummer</th><th>Fornavn</th><th>Etternavn</th><th>E-post</th><th>Stilling</th><th>Opprettet dato</th></tr>
 
             <style>
                 th {text-align: left;}
@@ -122,10 +122,14 @@ require_once "config.php";
 
             // Hent alle kunder for å vise firmanavn og for dropdown
             $kundeliste = [];
-            $sqlAllKunder = "SELECT kunde_id, firmanavn FROM kunder";
+            $sqlAllKunder = "SELECT kunde_id, firmanavn, organisasjonsnummer FROM kunder";
             $resultAllKunder = $conn->query($sqlAllKunder);
+            $kundeliste = [];
             while ($k = $resultAllKunder->fetch_assoc()) {
-                $kundeliste[$k['kunde_id']] = $k['firmanavn'];
+                $kundeliste[$k['kunde_id']] = [
+                    'firmanavn' => $k['firmanavn'],
+                    'organisasjonsnummer' => $k['organisasjonsnummer'] ?? ''
+                ];
             }
 
             // Check if there are results
@@ -141,7 +145,7 @@ require_once "config.php";
                         $kundeOptions = "";
                         foreach ($kundeliste as $kid => $fnavn) {
                             $selected = ($kid == $row["kunde_id"]) ? "selected" : "";
-                            $kundeOptions .= "<option value='$kid' $selected>" . htmlspecialchars($fnavn, ENT_QUOTES) . "</option>";
+                            $kundeOptions .= "<option value='$kid' $selected>" . htmlspecialchars($fnavn['firmanavn'], ENT_QUOTES) . "</option>";
                         }
 
                         echo "<tr>
@@ -162,10 +166,13 @@ require_once "config.php";
                                 </form>
                               </tr>";
                     } else {
-                        $firmanavn = isset($kundeliste[$row["kunde_id"]]) ? $kundeliste[$row["kunde_id"]] : "Ukjent";
+                        $kundeInfo = $kundeliste[$row['kunde_id']] ?? ['firmanavn'=>'Ukjent','organisasjonsnummer'=>'Ukjent'];
+                        $firmanavn = $kundeInfo['firmanavn'];
+                        $orgnr = $kundeInfo['organisasjonsnummer'];
                         echo "<tr data-type='" . htmlspecialchars($row["stilling"], ENT_QUOTES) . "'>
                                 <td>" . htmlspecialchars($row["kontakt_id"]) . "</td>
                                 <td>" . htmlspecialchars($firmanavn) . "</td>
+                                <td>" . htmlspecialchars($orgnr) . "</td>
                                 <td>" . htmlspecialchars($row["fornavn"]) . "</td>
                                 <td>" . htmlspecialchars($row["etternavn"]) . "</td>
                                 <td>" . htmlspecialchars($row["epost"]) . "</td>
