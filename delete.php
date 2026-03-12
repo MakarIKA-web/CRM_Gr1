@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "config.php";
 
 // Slett kunde
 if (isset($_GET['id'])) {
