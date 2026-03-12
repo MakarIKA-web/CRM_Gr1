@@ -13,9 +13,17 @@ require_once "config.php";
 <body>
     <!-- Kunder -->
     <main>
+        <div class="controls" style="text-align:center; margin-bottom:10px;">
+            <input type="text" id="kundeSearch" placeholder="Søk kunder..." />
+
+            <select id="kundeTypeFilter">
+                <option value="">Alle typer</option>
+            </select>
+        </div>
+
         <h2>Kunder</h2>
         <!-- Database table -->
-        <table style="margin: auto;">
+        <table id="kundeTable" style="margin: auto;">
             <!-- Table header -->
             <tr><th>ID</th><th>Type</th><th>Firmanavn</th><th>Organisasjonsnummer</th><th>Adresse</th><th>Opprettet dato</th></tr>
 
@@ -54,7 +62,7 @@ require_once "config.php";
                                 </form>
                               </tr>";
                     } else {
-                        echo "<tr>
+                        echo "<tr data-type='" . htmlspecialchars($row["kundetype"], ENT_QUOTES) . "'>
                                 <td>" . htmlspecialchars($row["kunde_id"]) . "</td>
                                 <td>" . htmlspecialchars($row["kundetype"]) . "</td>
                                 <td>" . htmlspecialchars($row["firmanavn"]) . "</td>
@@ -86,9 +94,16 @@ require_once "config.php";
     </main>
     <!-- Kontaktpersoner -->
     <main>
+        <div class="controls" style="text-align:center; margin-bottom:10px;">
+            <input type="text" id="kontaktSearch" placeholder="Søk kontaktpersoner..." />
+
+            <select id="kontaktTypeFilter">
+                <option value="">Alle typer</option>
+            </select>
+        </div>
         <h2>Kontaktpersoner</h2>
         <!-- Database table -->
-        <table style="margin: auto;">
+        <table id="kontaktpersonTable" style="margin: auto;">
             <!-- Table header -->
             <tr><th>Kontakt id</th><th>Firmanavn</th><th>Fornavn</th><th>Etternavn</th><th>E-post</th><th>Stilling</th><th>Opprettet dato</th></tr>
 
@@ -144,7 +159,7 @@ require_once "config.php";
                               </tr>";
                     } else {
                         $firmanavn = isset($kundeliste[$row["kunde_id"]]) ? $kundeliste[$row["kunde_id"]] : "Ukjent";
-                        echo "<tr>
+                        echo "<tr data-type='" . htmlspecialchars($row["stilling"], ENT_QUOTES) . "'>
                                 <td>" . htmlspecialchars($row["kontakt_id"]) . "</td>
                                 <td>" . htmlspecialchars($firmanavn) . "</td>
                                 <td>" . htmlspecialchars($row["fornavn"]) . "</td>
@@ -191,6 +206,97 @@ require_once "config.php";
     <script>
         const arrayValues = <?php echo json_encode($rows ?? [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
         console.log(arrayValues);
+    </script>
+
+    <script>
+    (function(){
+
+        const searchInput = document.getElementById("kundeSearch");
+        const typeFilter  = document.getElementById("kundeTypeFilter");
+
+        const rows = Array.from(document.querySelectorAll("#kundeTable tr")).slice(1);
+
+        // hent alle typer
+        const types = [...new Set(rows.map(r => r.dataset.type).filter(Boolean))];
+
+        types.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t;
+            opt.textContent = t;
+            typeFilter.appendChild(opt);
+        });
+
+        function filterRows(){
+
+            const query = searchInput.value.trim().toLowerCase();
+            const type  = typeFilter.value.trim().toLowerCase();
+
+            rows.forEach(row => {
+
+                // samle tekst fra alle celler i raden
+                const text = Array.from(row.cells).map(c => c.textContent.toLowerCase()).join(' ');
+
+                const rowType = (row.dataset.type || "").toLowerCase();
+
+                const match =
+                    (!query || text.includes(query)) &&
+                    (!type || rowType === type);
+
+                row.style.display = match ? "" : "none";
+
+            });
+        }
+
+        searchInput.addEventListener("input", filterRows);
+        typeFilter.addEventListener("change", filterRows);
+
+    })();
+    </script>
+
+    <script>
+    (function(){
+
+        const searchInput = document.getElementById("kontaktSearch");
+        const typeFilter  = document.getElementById("kontaktTypeFilter");
+
+        const rows = Array.from(document.querySelectorAll("#kontaktpersonTable tr")).slice(1);
+
+        // hent alle unike firmanavn fra kolonne 1
+        const types = [...new Set(rows.map(r => r.cells[1]?.textContent.trim()).filter(Boolean))];
+
+        types.forEach(t => {
+            const opt = document.createElement("option");
+            opt.value = t;
+            opt.textContent = t;
+            typeFilter.appendChild(opt);
+        });
+
+        function filterRows(){
+
+            const query = searchInput.value.trim().toLowerCase();
+            const type  = typeFilter.value.trim().toLowerCase();
+
+            rows.forEach(row => {
+
+                // samle tekst fra alle celler i raden
+                const text = Array.from(row.cells).map(c => c.textContent.toLowerCase()).join(' ');
+
+                // rowType basert på kolonne "Firmanavn" (index 1)
+                const rowType = (row.cells[1]?.textContent.trim() || "").toLowerCase();
+
+                const match =
+                    (!query || text.includes(query)) &&
+                    (!type || rowType === type);
+
+                row.style.display = match ? "" : "none";
+
+            });
+        }
+
+        searchInput.addEventListener("input", filterRows);
+        typeFilter.addEventListener("change", filterRows);
+
+    })();
     </script>
 </body>
 </html>
