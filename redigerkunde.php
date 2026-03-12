@@ -29,18 +29,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $orgnr = $conn->real_escape_string($_POST['organisasjonsnummer']);
     $adresse = $conn->real_escape_string($_POST['adresse']);
 
-    $sqlUpdateKunde = "UPDATE kunder SET firmanavn='$firmanavn', kundetype='$kundetype', organisasjonsnummer='$orgnr', adresse='$adresse' WHERE kunde_id=$kunde_id";
+    $sqlUpdateKunde = "UPDATE kunder SET 
+                        firmanavn='$firmanavn', 
+                        kundetype='$kundetype', 
+                        organisasjonsnummer='$orgnr', 
+                        adresse='$adresse' 
+                        WHERE kunde_id=$kunde_id";
     $conn->query($sqlUpdateKunde);
 
-    // Slett eksisterende kontaktpersoner
-    $conn->query("DELETE FROM kontaktpersoner WHERE kunde_id=$kunde_id");
-
-    // Legg til nye/oppdaterte kontaktpersoner
+    // Hent inn data om kontaktpersoner fra skjema
+    $kontakt_ids = $_POST['kontakt_id'] ?? [];
     $fornavn = $_POST['kontaktperson_fornavn'] ?? [];
     $etternavn = $_POST['kontaktperson_etternavn'] ?? [];
     $epost = $_POST['kontaktperson_epost'] ?? [];
     $telefon = $_POST['kontaktperson_telefon'] ?? [];
     $stilling = $_POST['kontaktperson_stilling'] ?? [];
+
+    $behold_ids = [];
 
     for ($i = 0; $i < count($fornavn); $i++) {
         $fn = $conn->real_escape_string($fornavn[$i]);
@@ -49,8 +54,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $tel = $conn->real_escape_string($telefon[$i]);
         $st = $conn->real_escape_string($stilling[$i]);
 
-        $conn->query("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato) 
-                      VALUES ($kunde_id, '$fn', '$en', '$ep', '$tel', '$st', NOW())");
+        if (!empty($kontakt_ids[$i])) {
+            // Oppdater eksisterende kontaktperson
+            $kid = intval($kontakt_ids[$i]);
+            $conn->query("UPDATE kontaktpersoner SET 
+                            fornavn='$fn', 
+                            etternavn='$en', 
+                            epost='$ep', 
+                            telefon='$tel', 
+                            stilling='$st' 
+                            WHERE kontakt_id=$kid AND kunde_id=$kunde_id");
+            $behold_ids[] = $kid;
+        } else {
+            // Sett inn ny kontaktperson
+            $conn->query("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato) 
+                        VALUES ($kunde_id, '$fn', '$en', '$ep', '$tel', '$st', NOW())");
+            $behold_ids[] = $conn->insert_id; // ID på nytt opprettet
+        }
+    }
+
+    // Slett kontaktpersoner som ikke lenger finnes i skjemaet
+    if (!empty($behold_ids)) {
+        $behold_str = implode(',', $behold_ids);
+        $conn->query("DELETE FROM kontaktpersoner WHERE kunde_id=$kunde_id AND kontakt_id NOT IN ($behold_str)");
+    } else {
+        $conn->query("DELETE FROM kontaktpersoner WHERE kunde_id=$kunde_id");
     }
 
     header("Location: index.php");
@@ -107,6 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div id="kontaktperson-container">
                 <?php foreach($kontakter as $kontakt): ?>
                     <div class="kontaktperson">
+                        <input type="hidden" name="kontakt_id[]" value="<?php echo isset($kontakt['kontakt_id']) ? $kontakt['kontakt_id'] : ''; ?>">
                         <div class="field-group">
                             <label>Fornavn</label>
                             <input type="text" name="kontaktperson_fornavn[]" value="<?php echo htmlspecialchars($kontakt['fornavn']); ?>" required>
@@ -151,7 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
     addBtn.addEventListener('click', () => {
         const firstKontakt = container.querySelector('.kontaktperson');
         const newKontakt = firstKontakt.cloneNode(true);
-        newKontakt.querySelectorAll('input').forEach(input => input.value = '');
+        newKontakt.querySelectorAll('input').forEach(input => {
+            if (input.type === 'hidden') input.value = ''; // fjern kontaktperson_id for ny
+            else input.value = '';
+        });
         container.appendChild(newKontakt);
     });
 
