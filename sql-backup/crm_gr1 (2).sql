@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 13. Mar, 2026 09:57 AM
+-- Generation Time: 13. Mar, 2026 10:09 AM
 -- Tjener-versjon: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,11 +43,8 @@ CREATE TABLE `kontaktpersoner` (
 --
 
 INSERT INTO `kontaktpersoner` (`kontakt_id`, `kunde_id`, `fornavn`, `etternavn`, `epost`, `telefon`, `stilling`, `opprettet_dato`) VALUES
-(8, 6, 'Ol67', 'Nordmenn', 'olanordmenn@epost.no', '54545459', 'Leder777', '2026-03-12 08:56:15'),
 (22, 1, 'Lars', 'Hansen5656', 'lars@nordtech.no', '91234567', 'Daglig leder', '2026-03-12 10:12:15'),
-(23, 1, 'Maria', 'Olsen', 'maria@nordtech.no', '92345678', 'Salgssjef', '2026-03-12 10:12:15'),
-(24, 1, 'Ola', 'Nordmenn', 'olanordmennn@epost.no', '53786868', 'Leder', '2026-03-12 10:12:15'),
-(25, 1, 'Pido', 'Nordmenn', 'pidornordmenn@epost.no', '64547898', 'Daglig leder', '2026-03-12 10:12:15');
+(23, 1, 'Maria', 'Olsen', 'maria@nordtech.no', '92345678', 'Salgssjef', '2026-03-12 10:12:15');
 
 -- --------------------------------------------------------
 
@@ -61,18 +58,19 @@ CREATE TABLE `kunder` (
   `firmanavn` varchar(100) DEFAULT NULL,
   `organisasjonsnummer` varchar(50) DEFAULT NULL,
   `adresse` varchar(255) DEFAULT NULL,
-  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp()
+  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp(),
+  `postnummer` varchar(10) DEFAULT NULL,
+  `poststed` varchar(100) DEFAULT NULL
 ) ;
 
 --
 -- Dataark for tabell `kunder`
 --
 
-INSERT INTO `kunder` (`kunde_id`, `kundetype`, `firmanavn`, `organisasjonsnummer`, `adresse`, `opprettet_dato`) VALUES
-(1, 'bedrift', 'NordTech AS', '912345678', 'Storgata 12, Oslo', '2026-03-06 09:11:26'),
-(3, 'privat', NULL, NULL, 'Bjørnsons gate 8, Trondheim', '2026-03-06 09:11:26'),
-(4, 'bedrift', 'Rema 100', '566456765', 'Storgata 12, Oslo', '2026-03-10 12:09:45'),
-(6, 'privat', 'Rema 102', '456557687', 'Krabberødkollen 1', '2026-03-12 08:56:15');
+INSERT INTO `kunder` (`kunde_id`, `kundetype`, `firmanavn`, `organisasjonsnummer`, `adresse`, `opprettet_dato`, `postnummer`, `poststed`) VALUES
+(1, 'bedrift', 'NordTech AS', '912345678', 'Storgata 12', '2026-03-06 09:11:26', '0155', 'Oslo'),
+(3, 'privat', NULL, NULL, 'Bjørnsons gate 8', '2026-03-06 09:11:26', '7011', 'Trondheim'),
+(4, 'bedrift', 'Rema 1000', '566456765', 'Storgata 12', '2026-03-10 12:09:45', NULL, 'Oslo');
 
 --
 -- Indexes for dumped tables
