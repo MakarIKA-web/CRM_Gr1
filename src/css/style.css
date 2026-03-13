@@ -41,7 +41,7 @@ h2 { font-size:.65rem; font-weight:600; letter-spacing:.14em; text-transform:upp
 .controls input::placeholder { color:var(--t2); font-style:italic; }
 .controls input:focus, .controls select:focus { border-color:var(--bf); background:var(--bg3); }
 
-
+/* ── Table ── */
 table {
     width: 100%;
     border-collapse: collapse;
