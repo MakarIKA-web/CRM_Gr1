@@ -52,6 +52,16 @@ $orgnr_error = $_GET['orgnr_error'] ?? '';
                 <input type="text" name="adresse" id="adresse" placeholder="F.eks. Storgata 1" required>
             </div>
 
+            <div class="field-group">
+                <label for="postnummer">Postnummer</label>
+                <input type="text" name="postnummer" id="postnummer" placeholder="F.eks. 1234" required>
+            </div>
+
+            <div class="field-group">
+                <label for="poststed">Poststed</label>
+                <input type="text" name="poststed" id="poststed" placeholder="F.eks. Oslo" required>
+            </div>
+
             <hr class="field-divider">
 
             <!-- KONTAKTPERSONER -->

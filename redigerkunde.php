@@ -129,6 +129,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="adresse" id="adresse" value="<?php echo htmlspecialchars($kunde['adresse']); ?>" required>
             </div>
 
+            <div class="field-group">
+                <label for="postnummer">Postnummer</label>
+                <input type="text" name="postnummer" id="postnummer" value="<?php echo htmlspecialchars($kunde['postnummer']); ?>" required>
+            </div>
+
+            <div class="field-group">
+                <label for="poststed">Poststed</label>
+                <input type="text" name="poststed" id="poststed" value="<?php echo htmlspecialchars($kunde['poststed']); ?>" required>
+            </div>
+
             <hr class="field-divider">
 
             <!-- Kontaktpersoner -->
