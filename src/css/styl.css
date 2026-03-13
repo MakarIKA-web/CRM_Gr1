@@ -28,7 +28,7 @@ main {
     flex-direction: column;
     gap: 48px;
 }
-h2 { font-size:.65rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--t2); margin-bottom:14px; }
+h2 { font-size:1rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--t2); margin-bottom:14px; }
 
 /* ── Controls ── */
 .controls { display:flex; gap:10px; margin-bottom:18px !important; }

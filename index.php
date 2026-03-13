@@ -22,6 +22,7 @@ require_once "config.php";
         </div>
 
         <h2>Kunder</h2>
+        <p>Oversikt over alle kunder</p>
         <!-- Database table -->
         <table id="kundeTable" style="margin: auto;">
             <!-- Table header -->
@@ -108,6 +109,7 @@ require_once "config.php";
             </select>
         </div>
         <h2>Kontaktpersoner</h2>
+        <p>Oversikt over alle kontaktpersoner</p>
         <!-- Database table -->
         <table id="kontaktpersonTable" style="margin: auto;">
             <!-- Table header -->
