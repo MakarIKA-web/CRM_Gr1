@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 06. Mar, 2026 10:12 AM
+-- Generation Time: 13. Mar, 2026 09:57 AM
 -- Tjener-versjon: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,11 +43,11 @@ CREATE TABLE `kontaktpersoner` (
 --
 
 INSERT INTO `kontaktpersoner` (`kontakt_id`, `kunde_id`, `fornavn`, `etternavn`, `epost`, `telefon`, `stilling`, `opprettet_dato`) VALUES
-(1, 1, 'Lars', 'Hansen', 'lars@nordtech.no', '91234567', 'Daglig leder', '2026-03-06 09:11:26'),
-(2, 1, 'Maria', 'Olsen', 'maria@nordtech.no', '92345678', 'Salgssjef', '2026-03-06 09:11:26'),
-(3, 2, 'Anders', 'Johansen', 'anders@greensolutions.no', '93456789', 'Prosjektleder', '2026-03-06 09:11:26'),
-(4, 2, 'Sofie', 'Nilsen', 'sofie@greensolutions.no', '94567890', 'Økonomisjef', '2026-03-06 09:11:26'),
-(5, 3, 'Ola', 'Nordmann', 'ola.nordmann@email.no', '95678901', NULL, '2026-03-06 09:11:26');
+(8, 6, 'Ol67', 'Nordmenn', 'olanordmenn@epost.no', '54545459', 'Leder777', '2026-03-12 08:56:15'),
+(22, 1, 'Lars', 'Hansen5656', 'lars@nordtech.no', '91234567', 'Daglig leder', '2026-03-12 10:12:15'),
+(23, 1, 'Maria', 'Olsen', 'maria@nordtech.no', '92345678', 'Salgssjef', '2026-03-12 10:12:15'),
+(24, 1, 'Ola', 'Nordmenn', 'olanordmennn@epost.no', '53786868', 'Leder', '2026-03-12 10:12:15'),
+(25, 1, 'Pido', 'Nordmenn', 'pidornordmenn@epost.no', '64547898', 'Daglig leder', '2026-03-12 10:12:15');
 
 -- --------------------------------------------------------
 
@@ -62,7 +62,7 @@ CREATE TABLE `kunder` (
   `organisasjonsnummer` varchar(50) DEFAULT NULL,
   `adresse` varchar(255) DEFAULT NULL,
   `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ;
 
 --
 -- Dataark for tabell `kunder`
@@ -70,8 +70,9 @@ CREATE TABLE `kunder` (
 
 INSERT INTO `kunder` (`kunde_id`, `kundetype`, `firmanavn`, `organisasjonsnummer`, `adresse`, `opprettet_dato`) VALUES
 (1, 'bedrift', 'NordTech AS', '912345678', 'Storgata 12, Oslo', '2026-03-06 09:11:26'),
-(2, 'bedrift', 'Green Solutions AS', '923456789', 'Parkveien 5, Bergen', '2026-03-06 09:11:26'),
-(3, 'privat', NULL, NULL, 'Bjørnsons gate 8, Trondheim', '2026-03-06 09:11:26');
+(3, 'privat', NULL, NULL, 'Bjørnsons gate 8, Trondheim', '2026-03-06 09:11:26'),
+(4, 'bedrift', 'Rema 100', '566456765', 'Storgata 12, Oslo', '2026-03-10 12:09:45'),
+(6, 'privat', 'Rema 102', '456557687', 'Krabberødkollen 1', '2026-03-12 08:56:15');
 
 --
 -- Indexes for dumped tables
@@ -88,7 +89,8 @@ ALTER TABLE `kontaktpersoner`
 -- Indexes for table `kunder`
 --
 ALTER TABLE `kunder`
-  ADD PRIMARY KEY (`kunde_id`);
+  ADD PRIMARY KEY (`kunde_id`),
+  ADD UNIQUE KEY `unik_organisasjonsnummer` (`organisasjonsnummer`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -98,13 +100,13 @@ ALTER TABLE `kunder`
 -- AUTO_INCREMENT for table `kontaktpersoner`
 --
 ALTER TABLE `kontaktpersoner`
-  MODIFY `kontakt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `kontakt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `kunder`
 --
 ALTER TABLE `kunder`
-  MODIFY `kunde_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `kunde_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Begrensninger for dumpede tabeller
