@@ -1,5 +1,7 @@
 <?php
 require_once "config.php";
+
+$orgnr_error = $_GET['orgnr_error'] ?? '';
 ?>
 
 <!DOCTYPE html>

@@ -7,6 +7,19 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
     $organisasjonsnummer = htmlspecialchars($data['organisasjonsnummer'] ?? '', ENT_QUOTES, 'UTF-8');
     $adresse = htmlspecialchars($data['adresse'] ?? '', ENT_QUOTES, 'UTF-8');
 
+    // Sjekk om organisasjonsnummer finnes fra før
+    $sjekk = $conn->prepare("SELECT kunde_id FROM kunder WHERE organisasjonsnummer = ?");
+    $sjekk->bind_param("s", $organisasjonsnummer);
+    $sjekk->execute();
+    $result = $sjekk->get_result();
+
+    if ($result->num_rows > 0) {
+        $sjekk->close();
+        return "Dette organisasjonsnummeret finnes allerede i systemet.";
+    }
+
+    $sjekk->close();
+
     // 2. Sett inn kunden
     $stmt = $conn->prepare("INSERT INTO kunder (kundetype, firmanavn, organisasjonsnummer, adresse) VALUES (?, ?, ?, ?)");
     if (!$stmt) return "Feil i SQL-preparering: " . $conn->error;
