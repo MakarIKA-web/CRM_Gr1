@@ -25,7 +25,7 @@ require_once "config.php";
         <!-- Database table -->
         <table id="kundeTable" style="margin: auto;">
             <!-- Table header -->
-            <tr><th>ID</th><th>Type</th><th>Firmanavn</th><th>Organisasjonsnummer</th><th>Adresse</th><th>Opprettet dato</th></tr>
+            <tr><th>ID</th><th>Type</th><th>Firmanavn</th><th>Organisasjonsnummer</th><th>Adresse</th><th>Postnummer</th><th>Poststed</th><th>Opprettet dato</th></tr>
 
             <style>
                 th {text-align: left;}
@@ -68,6 +68,8 @@ require_once "config.php";
                                 <td>" . htmlspecialchars($row["firmanavn"]) . "</td>
                                 <td>" . htmlspecialchars($row["organisasjonsnummer"]) . "</td>
                                 <td>" . htmlspecialchars($row["adresse"]) . "</td>
+                                <td>" . htmlspecialchars($row["postnummer"]) . "</td>
+                                <td>" . htmlspecialchars($row["poststed"]) . "</td>
                                 <td>" . htmlspecialchars($row["opprettet_dato"]) . "</td>
                                 <td>
                                     <form method='GET' action='delete.php'>
