@@ -13,6 +13,9 @@ require_once "config.php";
 <body>
     <!-- Kunder -->
     <main>
+        <h2>Kunder</h2>
+        <p>Oversikt over alle kunder</p>
+
         <div class="controls" style="text-align:center; margin-bottom:10px;">
             <input type="text" id="kundeSearch" placeholder="Søk kunder..." />
 
@@ -21,8 +24,6 @@ require_once "config.php";
             </select>
         </div>
 
-        <h2>Kunder</h2>
-        <p>Oversikt over alle kunder</p>
         <!-- Database table -->
         <table id="kundeTable" style="margin: auto;">
             <!-- Table header -->
@@ -101,6 +102,9 @@ require_once "config.php";
     </main>
     <!-- Kontaktpersoner -->
     <main>
+        <h2>Kontaktpersoner</h2>
+        <p>Oversikt over alle kontaktpersoner</p>
+
         <div class="controls" style="text-align:center; margin-bottom:10px;">
             <input type="text" id="kontaktSearch" placeholder="Søk kontaktpersoner..." />
 
@@ -108,8 +112,7 @@ require_once "config.php";
                 <option value="">Alle typer</option>
             </select>
         </div>
-        <h2>Kontaktpersoner</h2>
-        <p>Oversikt over alle kontaktpersoner</p>
+
         <!-- Database table -->
         <table id="kontaktpersonTable" style="margin: auto;">
             <!-- Table header -->
