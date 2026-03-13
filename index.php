@@ -94,7 +94,7 @@ require_once "config.php";
             ?>
         </table>
 
-        <a href="add.php"><article style="margin: auto; max-width: 327.812px; margin-top: 2vh; text-align: center;">Legg til ny kunde</article></a>
+        <a href="addkunde.php"><article style="margin: auto; max-width: 327.812px; margin-top: 2vh; text-align: center;">Legg til ny kunde</article></a>
     </main>
     <!-- Kontaktpersoner -->
     <main>
@@ -206,7 +206,7 @@ require_once "config.php";
             ?>
         </table>
 
-        <a href="add.php"><article style="margin: auto; max-width: 327.812px; margin-top: 2vh; text-align: center;">Legg til ny kontaktperson</article></a>
+        <a href="addkontakt.php"><article style="margin: auto; max-width: 327.812px; margin-top: 2vh; text-align: center;">Legg til ny kontaktperson</article></a>
     </main>
 
 
