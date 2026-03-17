@@ -52,6 +52,16 @@ $orgnr_error = $_GET['orgnr_error'] ?? '';
                 <input type="text" name="adresse" id="adresse" placeholder="F.eks. Storgata 1" required>
             </div>
 
+            <div class="field-group">
+                <label for="postnummer">Postnummer</label>
+                <input type="text" name="postnummer" id="postnummer" placeholder="F.eks. 1234" required minlength="4" maxlength="4">
+            </div>
+
+            <div class="field-group">
+                <label for="poststed">Poststed</label>
+                <input type="text" name="poststed" id="poststed" placeholder="F.eks. Oslo" required>
+            </div>
+
             <hr class="field-divider">
 
             <!-- KONTAKTPERSONER -->
@@ -139,6 +149,37 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const kundetypeSelect = document.getElementById('kundetype');
+    const firmanavnInput = document.getElementById('firmanavn');
+    const orgnrInput = document.getElementById('organisasjonsnummer');
+
+    const fornavnInput = document.querySelector('input[name="kontaktperson_fornavn[]"]');
+    const etternavnInput = document.querySelector('input[name="kontaktperson_etternavn[]"]');
+
+    function updateFirmanavn() {
+        if (kundetypeSelect.value === 'privat') {
+            // Sett firmanavn som Fornavn Etternavn fra første kontaktperson
+            firmanavnInput.value = `${fornavnInput.value} ${etternavnInput.value}`.trim();
+            firmanavnInput.readOnly = true; // gjør det låst
+            orgnrInput.value = '';          // fjern organisasjonsnummer
+            orgnrInput.required = false;    // gjør ikke obligatorisk
+        } else {
+            firmanavnInput.readOnly = false;
+            orgnrInput.required = true;
+        }
+    }
+
+    // Oppdater når kundetype endres
+    kundetypeSelect.addEventListener('change', updateFirmanavn);
+
+    // Oppdater firmanavn når første kontaktperson endres
+    fornavnInput.addEventListener('input', updateFirmanavn);
+    etternavnInput.addEventListener('input', updateFirmanavn);
 });
 </script>
 

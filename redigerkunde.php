@@ -8,8 +8,16 @@ if (!isset($_GET['id'])) {
 
 $kunde_id = intval($_GET['id']);
 
-// Hent kundeinformasjon
-$sqlKunde = "SELECT * FROM kunder WHERE kunde_id = $kunde_id";
+// Hent kunde med adresse, postnummer og poststed
+$sqlKunde = "
+SELECT k.kunde_id, k.kundetype, k.firmanavn, k.organisasjonsnummer,
+       a.gate AS adresse, p.postnummer, s.poststed, k.adresse_id
+FROM kunder k
+LEFT JOIN adresser a ON k.adresse_id = a.adresse_id
+LEFT JOIN postnumre p ON a.postnummer = p.postnummer
+LEFT JOIN steder s ON p.sted_id = s.sted_id
+WHERE k.kunde_id = $kunde_id
+";
 $resultKunde = $conn->query($sqlKunde);
 if ($resultKunde->num_rows == 0) {
     die("Kunde ikke funnet.");
@@ -23,21 +31,66 @@ $kontakter = $resultKontakter->fetch_all(MYSQLI_ASSOC);
 
 // Behandle oppdatering når skjema sendes
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Oppdater kunde
-    $firmanavn = $conn->real_escape_string($_POST['firmanavn']);
-    $kundetype = $conn->real_escape_string($_POST['kundetype']);
-    $orgnr = $conn->real_escape_string($_POST['organisasjonsnummer']);
-    $adresse = $conn->real_escape_string($_POST['adresse']);
+    $firmanavn = $_POST['firmanavn'];
+    $kundetype = $_POST['kundetype'];
+    $orgnr     = $_POST['organisasjonsnummer'];
+    $gate      = $_POST['adresse'];
+    $postnummer= $_POST['postnummer'];
+    $poststed  = $_POST['poststed'];
 
-    $sqlUpdateKunde = "UPDATE kunder SET 
-                        firmanavn='$firmanavn', 
-                        kundetype='$kundetype', 
-                        organisasjonsnummer='$orgnr', 
-                        adresse='$adresse' 
-                        WHERE kunde_id=$kunde_id";
-    $conn->query($sqlUpdateKunde);
+    // 1️⃣ Hent eller opprett poststed
+    $stmt = $conn->prepare("SELECT sted_id FROM steder WHERE poststed = ?");
+    $stmt->bind_param("s", $poststed);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($sted_id);
 
-    // Hent inn data om kontaktpersoner fra skjema
+    if ($stmt->num_rows > 0) {
+        $stmt->fetch(); // hent sted_id fra eksisterende rad
+    } else {
+        $stmtInsert = $conn->prepare("INSERT INTO steder (poststed) VALUES (?)");
+        $stmtInsert->bind_param("s", $poststed);
+        $stmtInsert->execute();
+        $sted_id = $stmtInsert->insert_id; // ⚠️ viktig at vi setter sted_id her
+        $stmtInsert->close();
+    }
+    $stmt->close();
+
+    // 2️⃣ Hent eller opprett postnummer
+    $stmt = $conn->prepare("SELECT postnummer FROM postnumre WHERE postnummer = ?");
+    $stmt->bind_param("s", $postnummer);
+    $stmt->execute();
+    $stmt->store_result();
+    if ($stmt->num_rows == 0) {
+        $stmtInsert = $conn->prepare("INSERT INTO postnumre (postnummer, sted_id) VALUES (?, ?)");
+        $stmtInsert->bind_param("si", $postnummer, $sted_id);
+        $stmtInsert->execute();
+        $stmtInsert->close();
+    }
+    $stmt->close();
+
+    // 3️⃣ Hent eller opprett adresse
+    $stmt = $conn->prepare("SELECT adresse_id FROM adresser WHERE gate = ? AND postnummer = ?");
+    $stmt->bind_param("ss", $gate, $postnummer);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($adresse_id);
+    if ($stmt->num_rows == 0) {
+        $stmtInsert = $conn->prepare("INSERT INTO adresser (gate, postnummer) VALUES (?, ?)");
+        $stmtInsert->bind_param("ss", $gate, $postnummer);
+        $stmtInsert->execute();
+        $adresse_id = $stmtInsert->insert_id;
+        $stmtInsert->close();
+    }
+    $stmt->close();
+
+    // 4️⃣ Oppdater kunden
+    $stmt = $conn->prepare("UPDATE kunder SET firmanavn=?, kundetype=?, organisasjonsnummer=?, adresse_id=? WHERE kunde_id=?");
+    $stmt->bind_param("sssii", $firmanavn, $kundetype, $orgnr, $adresse_id, $kunde_id);
+    $stmt->execute();
+    $stmt->close();
+
+    // 5️⃣ Oppdater kontaktpersoner
     $kontakt_ids = $_POST['kontakt_id'] ?? [];
     $fornavn = $_POST['kontaktperson_fornavn'] ?? [];
     $etternavn = $_POST['kontaktperson_etternavn'] ?? [];
@@ -55,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $st = $conn->real_escape_string($stilling[$i]);
 
         if (!empty($kontakt_ids[$i])) {
-            // Oppdater eksisterende kontaktperson
             $kid = intval($kontakt_ids[$i]);
             $conn->query("UPDATE kontaktpersoner SET 
                             fornavn='$fn', 
@@ -66,14 +118,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             WHERE kontakt_id=$kid AND kunde_id=$kunde_id");
             $behold_ids[] = $kid;
         } else {
-            // Sett inn ny kontaktperson
             $conn->query("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato) 
                         VALUES ($kunde_id, '$fn', '$en', '$ep', '$tel', '$st', NOW())");
-            $behold_ids[] = $conn->insert_id; // ID på nytt opprettet
+            $behold_ids[] = $conn->insert_id;
         }
     }
 
-    // Slett kontaktpersoner som ikke lenger finnes i skjemaet
+    // Slett kontaktpersoner som ikke lenger finnes
     if (!empty($behold_ids)) {
         $behold_str = implode(',', $behold_ids);
         $conn->query("DELETE FROM kontaktpersoner WHERE kunde_id=$kunde_id AND kontakt_id NOT IN ($behold_str)");
@@ -129,6 +180,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="adresse" id="adresse" value="<?php echo htmlspecialchars($kunde['adresse']); ?>" required>
             </div>
 
+            <div class="field-group">
+                <label for="postnummer">Postnummer</label>
+                <input type="text" name="postnummer" id="postnummer" value="<?php echo htmlspecialchars($kunde['postnummer']); ?>" required>
+            </div>
+
+            <div class="field-group">
+                <label for="poststed">Poststed</label>
+                <input type="text" name="poststed" id="poststed" value="<?php echo htmlspecialchars($kunde['poststed']); ?>" required>
+            </div>
+
             <hr class="field-divider">
 
             <!-- Kontaktpersoner -->
@@ -173,6 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="index.php" class="back-link">Tilbake til oversikten</a>
 </main>
 
+<!-- JS for dynamisk kontaktperson og privat/bedrift-firmanavn -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.querySelector('.add-contact-btn');
@@ -182,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstKontakt = container.querySelector('.kontaktperson');
         const newKontakt = firstKontakt.cloneNode(true);
         newKontakt.querySelectorAll('input').forEach(input => {
-            if (input.type === 'hidden') input.value = ''; // fjern kontaktperson_id for ny
+            if (input.type === 'hidden') input.value = '';
             else input.value = '';
         });
         container.appendChild(newKontakt);
@@ -198,7 +260,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    const kundetypeSelect = document.getElementById('kundetype');
+    const firmanavnInput = document.getElementById('firmanavn');
+
+    function getFirstKontaktNavn() {
+        const firstKontakt = container.querySelector('.kontaktperson');
+        if (!firstKontakt) return '';
+        const fornavn = firstKontakt.querySelector('input[name="kontaktperson_fornavn[]"]').value.trim();
+        const etternavn = firstKontakt.querySelector('input[name="kontaktperson_etternavn[]"]').value.trim();
+        return `${fornavn} ${etternavn}`.trim();
+    }
+
+    function updateFirmanavn() {
+        if (kundetypeSelect.value === 'privat') {
+            firmanavnInput.value = getFirstKontaktNavn();
+            firmanavnInput.readOnly = true;
+            document.getElementById('organisasjonsnummer').value = '';
+            document.getElementById('organisasjonsnummer').required = false;
+        } else {
+            firmanavnInput.readOnly = false;
+            document.getElementById('organisasjonsnummer').required = true;
+        }
+    }
+
+    kundetypeSelect.addEventListener('change', updateFirmanavn);
+    container.addEventListener('input', (e) => {
+        if (e.target.matches('input[name="kontaktperson_fornavn[]"], input[name="kontaktperson_etternavn[]"]')) {
+            updateFirmanavn();
+        }
+    });
+    updateFirmanavn();
 });
 </script>
+
 </body>
 </html>

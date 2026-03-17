@@ -40,12 +40,35 @@ require_once "config.php";
 
             // Check if there are results
             if ($resultkunder->num_rows > 0) {
-
                 while($row = $resultkunder->fetch_assoc()) {
 
-                    $rows[] = $row;
+                    // --- Hent adressen fra adresse-tabellen ---
+                    $adresseText = '';
+                    $postnummerText = '';
+                    $poststedText = '';
 
-                    // Sjekk om denne raden redigeres (KUNDER)
+                    if (!empty($row['adresse_id'])) {
+                        $adresseQuery = $conn->query("SELECT gate, postnummer FROM adresser WHERE adresse_id = " . intval($row['adresse_id']));
+                        if ($adresseQuery && $adresseRow = $adresseQuery->fetch_assoc()) {
+                            $adresseText = $adresseRow['gate'];
+                            $postnummerText = $adresseRow['postnummer'];
+
+                            // --- Hent poststed fra postnumre/steder ---
+                            $postQuery = $conn->query("
+                                SELECT s.poststed 
+                                FROM postnumre p, steder s 
+                                WHERE p.postnummer = '" . $conn->real_escape_string($postnummerText) . "' 
+                                AND p.sted_id = s.sted_id
+                            ");
+                            if ($postQuery && $postRow = $postQuery->fetch_assoc()) {
+                                $poststedText = $postRow['poststed'];
+                            }
+                        }
+                    }
+
+                    $rows[] = $row; // fortsatt lagre raden for JS osv.
+
+                    // --- Bygg tabellrad ---
                     if ($editing_kunde_id !== null && $editing_kunde_id == $row["kunde_id"]) {
                         echo "<tr>
                                 <form method='post' action='rediger.php'>
@@ -53,8 +76,10 @@ require_once "config.php";
                                     <td><input type='text' name='kundetype' value='" . htmlspecialchars($row["kundetype"], ENT_QUOTES) . "' required></td>
                                     <td><input type='text' name='firmanavn' value='" . htmlspecialchars($row["firmanavn"], ENT_QUOTES) . "' required></td>
                                     <td><input type='text' name='organisasjonsnummer' value='" . htmlspecialchars($row["organisasjonsnummer"], ENT_QUOTES) . "' required></td>
-                                    <td><input type='text' name='adresse' value='" . htmlspecialchars($row["adresse"], ENT_QUOTES) . "' required></td>
-                                    <td>Oppdateres automatisk</td>
+                                    <td><input type='text' name='adresse' value='" . htmlspecialchars($adresseText, ENT_QUOTES) . "' required></td>
+                                    <td>" . htmlspecialchars($postnummerText) . "</td>
+                                    <td>" . htmlspecialchars($poststedText) . "</td>
+                                    <td>" . htmlspecialchars($row["opprettet_dato"]) . "</td>
                                     <td>
                                         <a href='index.php'><button type='button'>Avbryt</button></a>
                                     </td>
@@ -62,36 +87,32 @@ require_once "config.php";
                                         <button type='submit' name='SaveKunde' value='" . $row["kunde_id"] . "'>Lagre</button>
                                     </td>
                                 </form>
-                              </tr>";
+                            </tr>";
                     } else {
                         echo "<tr data-type='" . htmlspecialchars($row["kundetype"], ENT_QUOTES) . "'>
                                 <td>" . htmlspecialchars($row["kunde_id"]) . "</td>
                                 <td>" . htmlspecialchars($row["kundetype"]) . "</td>
                                 <td>" . htmlspecialchars($row["firmanavn"]) . "</td>
                                 <td>" . htmlspecialchars($row["organisasjonsnummer"]) . "</td>
-                                <td>" . htmlspecialchars($row["adresse"]) . "</td>
-                                <td>" . htmlspecialchars($row["postnummer"]) . "</td>
-                                <td>" . htmlspecialchars($row["poststed"]) . "</td>
+                                <td>" . htmlspecialchars($adresseText) . "</td>
+                                <td>" . htmlspecialchars($postnummerText) . "</td>
+                                <td>" . htmlspecialchars($poststedText) . "</td>
                                 <td>" . htmlspecialchars($row["opprettet_dato"]) . "</td>
                                 <td>
                                     <form method='GET' action='delete.php'>
                                         <input type='hidden' name='id' value='" . $row['kunde_id'] . "'>
-                                        <button type='submit' onclick=\"return confirm('Er du sikker på at du vil slette denne kunden?')\"><svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><polyline points='3 6 5 6 21 6'/><path d='M19 6l-1 14H6L5 6'/><path d='M10 11v6M14 11v6'/></svg> Slett</button>
+                                        <button type='submit' onclick=\"return confirm('Er du sikker på at du vil slette denne kunden?')\">Slett</button>
                                     </form>
                                 </td>
                                 <td>
                                     <form method='GET' action='redigerkunde.php'>
                                         <input type='hidden' name='id' value='{$row['kunde_id']}'>
-                                        <button type='submit' class='btn btn-edit'>
-                                            <svg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/></svg>
-                                            Rediger
-                                        </button>
+                                        <button type='submit' class='btn btn-edit'>Rediger</button>
                                     </form>
                                 </td>
                             </tr>";
                     }
                 }
-
             } else {
                 echo "<tr><td colspan='8'>Ingen data funnet</td></tr>";
             }
@@ -322,6 +343,25 @@ require_once "config.php";
         typeFilter.addEventListener("change", filterRows);
 
     })();
-    </script>
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Hent alle rader med data-type
+    const rows = document.querySelectorAll('tr[data-type]');
+
+    rows.forEach(row => {
+        const type = row.getAttribute('data-type');
+
+        // Finn den 4. <td> (indeks 3)
+        const td = row.querySelectorAll('td')[3];
+        if (type === 'privat') {
+            td.textContent = 'Privatperson';
+        }
+    });
+});
+</script>
+
+
 </body>
 </html>
