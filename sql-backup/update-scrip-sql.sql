@@ -1,101 +1,36 @@
--- --------------------------------------------------------
--- CRM Database - oppdatert struktur med ansatte og normalisert adresse
--- --------------------------------------------------------
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+00:00";
 
-SET FOREIGN_KEY_CHECKS = 0;
+-- 1. Legg til adresse_id i kunder-tabellen
+ALTER TABLE kunder
+  ADD COLUMN adresse_id INT(11) DEFAULT NULL;
 
--- --------------------------------------------------------
--- Tabell for ansatte
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS ansatte (
-    ansatt_id INT(11) NOT NULL AUTO_INCREMENT,
-    brukernavn VARCHAR(50) NOT NULL UNIQUE,
-    passord_hash VARCHAR(255) NOT NULL,
-    fornavn VARCHAR(100) NOT NULL,
-    etternavn VARCHAR(100) NOT NULL,
-    epost VARCHAR(100) DEFAULT NULL,
-    rolle ENUM('admin','selger','support') DEFAULT 'selger',
-    opprettet_dato TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (ansatt_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- 2. Opprett postnummer og sted hvis ikke eksisterer
+INSERT IGNORE INTO steder (sted_id, poststed)
+SELECT DISTINCT 1, 'Oslo' WHERE NOT EXISTS (SELECT 1 FROM steder WHERE poststed='Oslo');
 
--- --------------------------------------------------------
--- Tabell for steder
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS steder (
-    sted_id INT(11) NOT NULL AUTO_INCREMENT,
-    poststed VARCHAR(100) NOT NULL UNIQUE,
-    PRIMARY KEY (sted_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT IGNORE INTO postnumre (postnummer, sted_id)
+SELECT DISTINCT '0155', 1 WHERE NOT EXISTS (SELECT 1 FROM postnumre WHERE postnummer='0155');
 
--- --------------------------------------------------------
--- Tabell for postnumre
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS postnumre (
-    postnummer VARCHAR(10) NOT NULL,
-    sted_id INT(11) NOT NULL,
-    PRIMARY KEY (postnummer),
-    CONSTRAINT fk_postnummer_sted
-        FOREIGN KEY (sted_id)
-        REFERENCES steder(sted_id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- 3. Opprett adresser og koble til kunder
+INSERT IGNORE INTO adresser (adresse_id, gate, postnummer)
+SELECT 1, 'Storgata 12', '0155' 
+WHERE NOT EXISTS (SELECT 1 FROM adresser WHERE gate='Storgata 12' AND postnummer='0155');
 
--- --------------------------------------------------------
--- Tabell for adresser
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS adresser (
-    adresse_id INT(11) NOT NULL AUTO_INCREMENT,
-    gate VARCHAR(255) NOT NULL,
-    postnummer VARCHAR(10) NOT NULL,
-    PRIMARY KEY (adresse_id),
-    CONSTRAINT fk_adresse_postnummer
-        FOREIGN KEY (postnummer)
-        REFERENCES postnumre(postnummer)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- 4. Oppdater kunder med adresse_id
+UPDATE kunder k
+JOIN adresser a ON a.gate='Storgata 12'
+SET k.adresse_id = a.adresse_id
+WHERE k.kunde_id=1;
 
--- --------------------------------------------------------
--- Tabell for kunder
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS kunder (
-    kunde_id INT(11) NOT NULL AUTO_INCREMENT,
-    kundetype ENUM('privat','bedrift') NOT NULL,
-    firmanavn VARCHAR(100) DEFAULT NULL,
-    organisasjonsnummer VARCHAR(50) DEFAULT NULL UNIQUE,
-    adresse_id INT(11) DEFAULT NULL,
-    opprettet_dato TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (kunde_id),
-    CONSTRAINT fk_kunder_adresse
-        FOREIGN KEY (adresse_id)
-        REFERENCES adresser(adresse_id)
-        ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- 5. Fjern gamle kolonner
+ALTER TABLE kunder
+  DROP COLUMN adresse,
+  DROP COLUMN postnummer;
 
--- --------------------------------------------------------
--- Tabell for kontaktpersoner
--- --------------------------------------------------------
-CREATE TABLE IF NOT EXISTS kontaktpersoner (
-    kontakt_id INT(11) NOT NULL AUTO_INCREMENT,
-    kunde_id INT(11) NOT NULL,
-    fornavn VARCHAR(100) NOT NULL,
-    etternavn VARCHAR(100) NOT NULL,
-    epost VARCHAR(100) DEFAULT NULL,
-    telefon VARCHAR(30) DEFAULT NULL,
-    stilling VARCHAR(100) DEFAULT NULL,
-    opprettet_dato TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (kontakt_id),
-    KEY kunde_id (kunde_id),
-    CONSTRAINT kontaktpersoner_ibfk_1
-        FOREIGN KEY (kunde_id)
-        REFERENCES kunder(kunde_id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-SET FOREIGN_KEY_CHECKS = 1;
+-- 6. Opprett ny fremmednøkkel med ON DELETE SET NULL
+ALTER TABLE kunder
+  ADD CONSTRAINT fk_kunder_adresse
+  FOREIGN KEY (adresse_id) REFERENCES adresser(adresse_id)
+  ON DELETE SET NULL;
 
 COMMIT;
