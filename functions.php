@@ -91,9 +91,12 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
         $telefon   = htmlspecialchars($telefonArray[$i], ENT_QUOTES, 'UTF-8');
         $stilling  = htmlspecialchars($stillingArray[$i], ENT_QUOTES, 'UTF-8');
 
-        $stmt = $conn->prepare("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-        $stmt->bind_param("isssss", $kunde_id, $fornavn, $etternavn, $epost, $telefon, $stilling);
-        $stmt->execute();
+        $stmt = $conn->prepare("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isssss", $kundeId, $fornavn, $etternavn, $epost, $telefon, $stilling);
+        if (!$stmt->execute()) {
+            $stmt->close();
+            return "Feil ved innsetting av kontaktperson: " . $stmt->error;
+        }
         $stmt->close();
     }
 
