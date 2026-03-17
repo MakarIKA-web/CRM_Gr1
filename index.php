@@ -150,13 +150,14 @@ require_once "config.php";
 
             // Hent alle kunder for å vise firmanavn og for dropdown
             $kundeliste = [];
-            $sqlAllKunder = "SELECT kunde_id, firmanavn, organisasjonsnummer FROM kunder";
+            $sqlAllKunder = "SELECT kunde_id, firmanavn, organisasjonsnummer, kundetype FROM kunder";
             $resultAllKunder = $conn->query($sqlAllKunder);
             $kundeliste = [];
             while ($k = $resultAllKunder->fetch_assoc()) {
                 $kundeliste[$k['kunde_id']] = [
                     'firmanavn' => $k['firmanavn'],
-                    'organisasjonsnummer' => $k['organisasjonsnummer'] ?? ''
+                    'organisasjonsnummer' => $k['organisasjonsnummer'] ?? '',
+                    'kundetype' => $k['kundetype'] ?? ''
                 ];
             }
 
@@ -194,10 +195,19 @@ require_once "config.php";
                                 </form>
                               </tr>";
                     } else {
-                        $kundeInfo = $kundeliste[$row['kunde_id']] ?? ['firmanavn'=>'Ukjent','organisasjonsnummer'=>'Ukjent'];
+                        $kundeInfo = $kundeliste[$row['kunde_id']] ?? [
+                            'firmanavn'=>'Ukjent',
+                            'organisasjonsnummer'=>'Ukjent',
+                            'kundetype'=>''
+                        ];
+
                         $firmanavn = $kundeInfo['firmanavn'];
                         $orgnr = $kundeInfo['organisasjonsnummer'];
-                        echo "<tr data-type='" . htmlspecialchars($row["stilling"], ENT_QUOTES) . "'>
+                        $kundetype = $kundeInfo['kundetype']; // du må hente denne fra kunder-tabellen
+
+                        echo "<tr 
+                                data-type='" . htmlspecialchars($row["stilling"], ENT_QUOTES) . "'
+                                data-kundetype='" . htmlspecialchars($kundetype, ENT_QUOTES) . "'>
                                 <td>" . htmlspecialchars($row["kontakt_id"]) . "</td>
                                 <td>" . htmlspecialchars($firmanavn) . "</td>
                                 <td>" . htmlspecialchars($orgnr) . "</td>
@@ -362,6 +372,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.querySelectorAll('#kontaktpersonTable tr[data-kundetype]');
+
+    rows.forEach(row => {
+        const kundetype = (row.dataset.kundetype || "").toLowerCase();
+
+        // Organisasjonsnummer = kolonne index 2
+        const orgTd = row.querySelectorAll('td')[2];
+
+        if (kundetype === 'privat') {
+            orgTd.textContent = 'Privatperson';
+        }
+    });
+});
+</script>
 
 </body>
 </html>
