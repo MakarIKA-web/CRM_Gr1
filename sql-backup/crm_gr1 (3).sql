@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 13. Mar, 2026 10:09 AM
+-- Generation Time: 17. Mar, 2026 12:19 PM
 -- Tjener-versjon: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,35 @@ SET time_zone = "+00:00";
 --
 -- Database: `crm_gr1`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur for tabell `adresser`
+--
+
+CREATE TABLE `adresser` (
+  `adresse_id` int(11) NOT NULL,
+  `gate` varchar(255) NOT NULL,
+  `postnummer` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur for tabell `ansatte`
+--
+
+CREATE TABLE `ansatte` (
+  `ansatt_id` int(11) NOT NULL,
+  `brukernavn` varchar(50) NOT NULL,
+  `passord_hash` varchar(255) NOT NULL,
+  `fornavn` varchar(100) NOT NULL,
+  `etternavn` varchar(100) NOT NULL,
+  `epost` varchar(100) DEFAULT NULL,
+  `rolle` enum('admin','selger','support') DEFAULT 'selger',
+  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -72,9 +101,45 @@ INSERT INTO `kunder` (`kunde_id`, `kundetype`, `firmanavn`, `organisasjonsnummer
 (3, 'privat', NULL, NULL, 'Bjørnsons gate 8', '2026-03-06 09:11:26', '7011', 'Trondheim'),
 (4, 'bedrift', 'Rema 1000', '566456765', 'Storgata 12', '2026-03-10 12:09:45', NULL, 'Oslo');
 
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur for tabell `postnumre`
+--
+
+CREATE TABLE `postnumre` (
+  `postnummer` varchar(10) NOT NULL,
+  `sted_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur for tabell `steder`
+--
+
+CREATE TABLE `steder` (
+  `sted_id` int(11) NOT NULL,
+  `poststed` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `adresser`
+--
+ALTER TABLE `adresser`
+  ADD PRIMARY KEY (`adresse_id`),
+  ADD KEY `fk_adresse_postnummer` (`postnummer`);
+
+--
+-- Indexes for table `ansatte`
+--
+ALTER TABLE `ansatte`
+  ADD PRIMARY KEY (`ansatt_id`),
+  ADD UNIQUE KEY `brukernavn` (`brukernavn`);
 
 --
 -- Indexes for table `kontaktpersoner`
@@ -91,8 +156,34 @@ ALTER TABLE `kunder`
   ADD UNIQUE KEY `unik_organisasjonsnummer` (`organisasjonsnummer`);
 
 --
+-- Indexes for table `postnumre`
+--
+ALTER TABLE `postnumre`
+  ADD PRIMARY KEY (`postnummer`),
+  ADD KEY `fk_postnummer_sted` (`sted_id`);
+
+--
+-- Indexes for table `steder`
+--
+ALTER TABLE `steder`
+  ADD PRIMARY KEY (`sted_id`),
+  ADD UNIQUE KEY `poststed` (`poststed`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `adresser`
+--
+ALTER TABLE `adresser`
+  MODIFY `adresse_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `ansatte`
+--
+ALTER TABLE `ansatte`
+  MODIFY `ansatt_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `kontaktpersoner`
@@ -107,14 +198,32 @@ ALTER TABLE `kunder`
   MODIFY `kunde_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `steder`
+--
+ALTER TABLE `steder`
+  MODIFY `sted_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- Begrensninger for dumpede tabeller
 --
+
+--
+-- Begrensninger for tabell `adresser`
+--
+ALTER TABLE `adresser`
+  ADD CONSTRAINT `fk_adresse_postnummer` FOREIGN KEY (`postnummer`) REFERENCES `postnumre` (`postnummer`) ON DELETE CASCADE;
 
 --
 -- Begrensninger for tabell `kontaktpersoner`
 --
 ALTER TABLE `kontaktpersoner`
   ADD CONSTRAINT `kontaktpersoner_ibfk_1` FOREIGN KEY (`kunde_id`) REFERENCES `kunder` (`kunde_id`) ON DELETE CASCADE;
+
+--
+-- Begrensninger for tabell `postnumre`
+--
+ALTER TABLE `postnumre`
+  ADD CONSTRAINT `fk_postnummer_sted` FOREIGN KEY (`sted_id`) REFERENCES `steder` (`sted_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
