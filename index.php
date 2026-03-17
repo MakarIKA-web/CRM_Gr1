@@ -322,6 +322,25 @@ require_once "config.php";
         typeFilter.addEventListener("change", filterRows);
 
     })();
-    </script>
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Hent alle rader med data-type
+    const rows = document.querySelectorAll('tr[data-type]');
+
+    rows.forEach(row => {
+        const type = row.getAttribute('data-type');
+
+        // Finn den 4. <td> (indeks 3)
+        const td = row.querySelectorAll('td')[3];
+        if (type === 'privat') {
+            td.textContent = 'Privatperson';
+        }
+    });
+});
+</script>
+
+
 </body>
 </html>

@@ -142,5 +142,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const kundetypeSelect = document.getElementById('kundetype');
+    const firmanavnInput = document.getElementById('firmanavn');
+    const orgnrInput = document.getElementById('organisasjonsnummer');
+
+    const fornavnInput = document.querySelector('input[name="kontaktperson_fornavn[]"]');
+    const etternavnInput = document.querySelector('input[name="kontaktperson_etternavn[]"]');
+
+    function updateFirmanavn() {
+        if (kundetypeSelect.value === 'privat') {
+            // Sett firmanavn som Fornavn Etternavn fra første kontaktperson
+            firmanavnInput.value = `${fornavnInput.value} ${etternavnInput.value}`.trim();
+            firmanavnInput.readOnly = true; // gjør det låst
+            orgnrInput.value = '';          // fjern organisasjonsnummer
+            orgnrInput.required = false;    // gjør ikke obligatorisk
+        } else {
+            firmanavnInput.readOnly = false;
+            orgnrInput.required = true;
+        }
+    }
+
+    // Oppdater når kundetype endres
+    kundetypeSelect.addEventListener('change', updateFirmanavn);
+
+    // Oppdater firmanavn når første kontaktperson endres
+    fornavnInput.addEventListener('input', updateFirmanavn);
+    etternavnInput.addEventListener('input', updateFirmanavn);
+});
+</script>
+
 </body>
 </html>

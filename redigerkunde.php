@@ -200,5 +200,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const kundetypeSelect = document.getElementById('kundetype');
+    const firmanavnInput = document.getElementById('firmanavn');
+
+    const container = document.getElementById('kontaktperson-container');
+
+    // Funksjon for å hente første kontaktpersons navn
+    function getFirstKontaktNavn() {
+        const firstKontakt = container.querySelector('.kontaktperson');
+        if (!firstKontakt) return '';
+        const fornavn = firstKontakt.querySelector('input[name="kontaktperson_fornavn[]"]').value.trim();
+        const etternavn = firstKontakt.querySelector('input[name="kontaktperson_etternavn[]"]').value.trim();
+        return `${fornavn} ${etternavn}`.trim();
+    }
+
+    function updateFirmanavn() {
+        if (kundetypeSelect.value === 'privat') {
+            firmanavnInput.value = getFirstKontaktNavn();
+            firmanavnInput.readOnly = true;
+            document.getElementById('organisasjonsnummer').value = '';
+            document.getElementById('organisasjonsnummer').required = false;
+        } else {
+            firmanavnInput.readOnly = false;
+            document.getElementById('organisasjonsnummer').required = true;
+        }
+    }
+
+    // Oppdater når kundetype endres
+    kundetypeSelect.addEventListener('change', updateFirmanavn);
+
+    // Oppdater firmanavn når første kontaktperson endres
+    container.addEventListener('input', (e) => {
+        if (e.target.matches('input[name="kontaktperson_fornavn[]"], input[name="kontaktperson_etternavn[]"]')) {
+            updateFirmanavn();
+        }
+    });
+
+    // Kjør oppdatering én gang ved lasting, for eksisterende data
+    updateFirmanavn();
+});
+</script>
+
 </body>
 </html>
