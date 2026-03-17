@@ -51,8 +51,6 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
         $stilling  = htmlspecialchars($stillingArray[$i], ENT_QUOTES, 'UTF-8');
 
         $stmt = $conn->prepare("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling) VALUES (?, ?, ?, ?, ?, ?)");
-        if (!$stmt) return "Feil i SQL-preparering for kontaktperson: " . $conn->error;
-
         $stmt->bind_param("isssss", $kundeId, $fornavn, $etternavn, $epost, $telefon, $stilling);
         if (!$stmt->execute()) {
             $stmt->close();

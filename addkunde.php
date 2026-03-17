@@ -24,7 +24,7 @@ $orgnr_error = $_GET['orgnr_error'] ?? '';
 
     <!-- FORM CARD -->
     <div class="form-card">
-        <form method="post" id="addForm" enctype="multipart/form-data">
+        <form method="post" action="requests.php" id="addForm" enctype="multipart/form-data">
 
             <!-- sjekk om den eksisterer allerede -->
             <div class="field-group">
