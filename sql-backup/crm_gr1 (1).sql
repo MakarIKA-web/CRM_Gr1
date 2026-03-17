@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 17. Mar, 2026 12:19 PM
--- Tjener-versjon: 10.4.32-MariaDB
+-- Generation Time: Mar 17, 2026 at 01:02 PM
+-- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `adresser`
+-- Table structure for table `adresser`
 --
 
 CREATE TABLE `adresser` (
@@ -33,10 +33,17 @@ CREATE TABLE `adresser` (
   `postnummer` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `adresser`
+--
+
+INSERT INTO `adresser` (`adresse_id`, `gate`, `postnummer`) VALUES
+(1, 'Storgata 12', '0155');
+
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `ansatte`
+-- Table structure for table `ansatte`
 --
 
 CREATE TABLE `ansatte` (
@@ -53,7 +60,7 @@ CREATE TABLE `ansatte` (
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `kontaktpersoner`
+-- Table structure for table `kontaktpersoner`
 --
 
 CREATE TABLE `kontaktpersoner` (
@@ -67,18 +74,10 @@ CREATE TABLE `kontaktpersoner` (
   `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dataark for tabell `kontaktpersoner`
---
-
-INSERT INTO `kontaktpersoner` (`kontakt_id`, `kunde_id`, `fornavn`, `etternavn`, `epost`, `telefon`, `stilling`, `opprettet_dato`) VALUES
-(22, 1, 'Lars', 'Hansen5656', 'lars@nordtech.no', '91234567', 'Daglig leder', '2026-03-12 10:12:15'),
-(23, 1, 'Maria', 'Olsen', 'maria@nordtech.no', '92345678', 'Salgssjef', '2026-03-12 10:12:15');
-
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `kunder`
+-- Table structure for table `kunder`
 --
 
 CREATE TABLE `kunder` (
@@ -86,25 +85,21 @@ CREATE TABLE `kunder` (
   `kundetype` enum('privat','bedrift') NOT NULL,
   `firmanavn` varchar(100) DEFAULT NULL,
   `organisasjonsnummer` varchar(50) DEFAULT NULL,
-  `adresse` varchar(255) DEFAULT NULL,
-  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp(),
-  `postnummer` varchar(10) DEFAULT NULL,
-  `poststed` varchar(100) DEFAULT NULL
-) ;
+  `adresse_id` int(11) DEFAULT NULL,
+  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dataark for tabell `kunder`
+-- Dumping data for table `kunder`
 --
 
-INSERT INTO `kunder` (`kunde_id`, `kundetype`, `firmanavn`, `organisasjonsnummer`, `adresse`, `opprettet_dato`, `postnummer`, `poststed`) VALUES
-(1, 'bedrift', 'NordTech AS', '912345678', 'Storgata 12', '2026-03-06 09:11:26', '0155', 'Oslo'),
-(3, 'privat', NULL, NULL, 'Bjørnsons gate 8', '2026-03-06 09:11:26', '7011', 'Trondheim'),
-(4, 'bedrift', 'Rema 1000', '566456765', 'Storgata 12', '2026-03-10 12:09:45', NULL, 'Oslo');
+INSERT INTO `kunder` (`kunde_id`, `kundetype`, `firmanavn`, `organisasjonsnummer`, `adresse_id`, `opprettet_dato`) VALUES
+(1, 'bedrift', 'NordTech AS', '912345678', 1, '2026-03-17 11:55:13');
 
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `postnumre`
+-- Table structure for table `postnumre`
 --
 
 CREATE TABLE `postnumre` (
@@ -112,16 +107,30 @@ CREATE TABLE `postnumre` (
   `sted_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `postnumre`
+--
+
+INSERT INTO `postnumre` (`postnummer`, `sted_id`) VALUES
+('0155', 1);
+
 -- --------------------------------------------------------
 
 --
--- Tabellstruktur for tabell `steder`
+-- Table structure for table `steder`
 --
 
 CREATE TABLE `steder` (
   `sted_id` int(11) NOT NULL,
   `poststed` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `steder`
+--
+
+INSERT INTO `steder` (`sted_id`, `poststed`) VALUES
+(1, 'Oslo');
 
 --
 -- Indexes for dumped tables
@@ -153,7 +162,8 @@ ALTER TABLE `kontaktpersoner`
 --
 ALTER TABLE `kunder`
   ADD PRIMARY KEY (`kunde_id`),
-  ADD UNIQUE KEY `unik_organisasjonsnummer` (`organisasjonsnummer`);
+  ADD UNIQUE KEY `organisasjonsnummer` (`organisasjonsnummer`),
+  ADD KEY `fk_kunder_adresse` (`adresse_id`);
 
 --
 -- Indexes for table `postnumre`
@@ -177,7 +187,7 @@ ALTER TABLE `steder`
 -- AUTO_INCREMENT for table `adresser`
 --
 ALTER TABLE `adresser`
-  MODIFY `adresse_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `adresse_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `ansatte`
@@ -189,38 +199,44 @@ ALTER TABLE `ansatte`
 -- AUTO_INCREMENT for table `kontaktpersoner`
 --
 ALTER TABLE `kontaktpersoner`
-  MODIFY `kontakt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `kontakt_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `kunder`
 --
 ALTER TABLE `kunder`
-  MODIFY `kunde_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `kunde_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `steder`
 --
 ALTER TABLE `steder`
-  MODIFY `sted_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `sted_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Begrensninger for dumpede tabeller
+-- Constraints for dumped tables
 --
 
 --
--- Begrensninger for tabell `adresser`
+-- Constraints for table `adresser`
 --
 ALTER TABLE `adresser`
   ADD CONSTRAINT `fk_adresse_postnummer` FOREIGN KEY (`postnummer`) REFERENCES `postnumre` (`postnummer`) ON DELETE CASCADE;
 
 --
--- Begrensninger for tabell `kontaktpersoner`
+-- Constraints for table `kontaktpersoner`
 --
 ALTER TABLE `kontaktpersoner`
   ADD CONSTRAINT `kontaktpersoner_ibfk_1` FOREIGN KEY (`kunde_id`) REFERENCES `kunder` (`kunde_id`) ON DELETE CASCADE;
 
 --
--- Begrensninger for tabell `postnumre`
+-- Constraints for table `kunder`
+--
+ALTER TABLE `kunder`
+  ADD CONSTRAINT `fk_kunder_adresse` FOREIGN KEY (`adresse_id`) REFERENCES `adresser` (`adresse_id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `postnumre`
 --
 ALTER TABLE `postnumre`
   ADD CONSTRAINT `fk_postnummer_sted` FOREIGN KEY (`sted_id`) REFERENCES `steder` (`sted_id`) ON DELETE CASCADE;
