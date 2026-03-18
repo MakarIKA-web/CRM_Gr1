@@ -1,5 +1,8 @@
 <?php
 // requests.php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once "db.php";
 require_once "functions.php";
 
@@ -29,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stilling = $conn->real_escape_string($_POST['stilling']);
         $opprettet_dato = date('Y-m-d H:i:s');
 
-        $sql = "INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato) 
+        $sql = "INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato)
                 VALUES ($kunde_id, '$fornavn', '$etternavn', '$epost', '$telefon', '$stilling', '$opprettet_dato')";
 
         if ($conn->query($sql) === TRUE) {

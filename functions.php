@@ -5,10 +5,14 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
     // 1️⃣ Sanitér kunde-data
     $firmanavn = htmlspecialchars($data['firmanavn'] ?? '', ENT_QUOTES, 'UTF-8');
     $kundetype = htmlspecialchars($data['kundetype'] ?? '', ENT_QUOTES, 'UTF-8');
-    $organisasjonsnummer = htmlspecialchars($data['organisasjonsnummer'] ?? '', ENT_QUOTES, 'UTF-8');
+    $organisasjonsnummer = $data['organisasjonsnummer'] ?? null;
     $adresse = htmlspecialchars($data['adresse'] ?? '', ENT_QUOTES, 'UTF-8');
     $postnummer = htmlspecialchars($data['postnummer'] ?? '', ENT_QUOTES, 'UTF-8');
     $poststed = htmlspecialchars($data['poststed'] ?? '', ENT_QUOTES, 'UTF-8');
+
+    if ($kundetype === 'privat') {
+        $organisasjonsnummer = null;
+    }
 
     // 2️⃣ Sjekk om organisasjonsnummer finnes fra før
     if ($organisasjonsnummer) {
@@ -72,7 +76,7 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
 
     // 6️⃣ Sett inn kunde med adresse_id
     $stmt = $conn->prepare("INSERT INTO kunder (kundetype, firmanavn, organisasjonsnummer, adresse_id, opprettet_dato) VALUES (?, ?, ?, ?, NOW())");
-    $stmt->bind_param("sssi", $kundetype, $firmanavn, $organisasjonsnummer, $adresse_id);
+    $stmt->bind_param("ssss", $kundetype, $firmanavn, $organisasjonsnummer, $adresse_id);
     $stmt->execute();
     $kunde_id = $conn->insert_id;
     $stmt->close();
@@ -92,7 +96,7 @@ function leggTilKundeMedKontaktpersoner($data, $conn) {
         $stilling  = htmlspecialchars($stillingArray[$i], ENT_QUOTES, 'UTF-8');
 
         $stmt = $conn->prepare("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("isssss", $kundeId, $fornavn, $etternavn, $epost, $telefon, $stilling);
+        $stmt->bind_param("isssss", $kunde_id, $fornavn, $etternavn, $epost, $telefon, $stilling);
         if (!$stmt->execute()) {
             $stmt->close();
             return "Feil ved innsetting av kontaktperson: " . $stmt->error;

@@ -41,9 +41,9 @@ $orgnr_error = $_GET['orgnr_error'] ?? '';
                 </select>
             </div>
 
-            <div class="field-group">
+            <div class="field-group" id="orgnr-field">
                 <label for="organisasjonsnummer">Organisasjonsnummer</label>
-                <input type="text" name="organisasjonsnummer" id="organisasjonsnummer" placeholder="F.eks. 123456789" required
+                <input type="text" name="organisasjonsnummer" id="organisasjonsnummer" placeholder="F.eks. 123456789"
                     minlength="9" maxlength="9">
             </div>
 
@@ -157,27 +157,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const kundetypeSelect = document.getElementById('kundetype');
     const firmanavnInput = document.getElementById('firmanavn');
     const orgnrInput = document.getElementById('organisasjonsnummer');
+    const orgnrField = document.getElementById('orgnr-field');
 
     const fornavnInput = document.querySelector('input[name="kontaktperson_fornavn[]"]');
     const etternavnInput = document.querySelector('input[name="kontaktperson_etternavn[]"]');
 
     function updateFirmanavn() {
         if (kundetypeSelect.value === 'privat') {
-            // Sett firmanavn som Fornavn Etternavn fra første kontaktperson
+            // Sett navn automatisk
             firmanavnInput.value = `${fornavnInput.value} ${etternavnInput.value}`.trim();
-            firmanavnInput.readOnly = true; // gjør det låst
-            orgnrInput.value = '';          // fjern organisasjonsnummer
-            orgnrInput.required = false;    // gjør ikke obligatorisk
+            firmanavnInput.readOnly = true;
+
+            // Skjul organisasjonsnummer
+            orgnrField.style.display = 'none';
+            orgnrInput.value = '';
+            orgnrInput.required = false;
+
         } else {
             firmanavnInput.readOnly = false;
+
+            // Vis organisasjonsnummer
+            orgnrField.style.display = 'block';
             orgnrInput.required = true;
         }
     }
 
-    // Oppdater når kundetype endres
     kundetypeSelect.addEventListener('change', updateFirmanavn);
-
-    // Oppdater firmanavn når første kontaktperson endres
     fornavnInput.addEventListener('input', updateFirmanavn);
     etternavnInput.addEventListener('input', updateFirmanavn);
 });

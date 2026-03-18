@@ -73,9 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare("SELECT adresse_id FROM adresser WHERE gate = ? AND postnummer = ?");
     $stmt->bind_param("ss", $gate, $postnummer);
     $stmt->execute();
-    $stmt->store_result();
     $stmt->bind_result($adresse_id);
-    if ($stmt->num_rows == 0) {
+    if (!$stmt->fetch()) {
         $stmtInsert = $conn->prepare("INSERT INTO adresser (gate, postnummer) VALUES (?, ?)");
         $stmtInsert->bind_param("ss", $gate, $postnummer);
         $stmtInsert->execute();
@@ -109,16 +108,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($kontakt_ids[$i])) {
             $kid = intval($kontakt_ids[$i]);
-            $conn->query("UPDATE kontaktpersoner SET 
-                            fornavn='$fn', 
-                            etternavn='$en', 
-                            epost='$ep', 
-                            telefon='$tel', 
-                            stilling='$st' 
+            $conn->query("UPDATE kontaktpersoner SET
+                            fornavn='$fn',
+                            etternavn='$en',
+                            epost='$ep',
+                            telefon='$tel',
+                            stilling='$st'
                             WHERE kontakt_id=$kid AND kunde_id=$kunde_id");
             $behold_ids[] = $kid;
         } else {
-            $conn->query("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato) 
+            $conn->query("INSERT INTO kontaktpersoner (kunde_id, fornavn, etternavn, epost, telefon, stilling, opprettet_dato)
                         VALUES ($kunde_id, '$fn', '$en', '$ep', '$tel', '$st', NOW())");
             $behold_ids[] = $conn->insert_id;
         }

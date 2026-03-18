@@ -61,7 +61,18 @@ while ($k = $resultAllKunder->fetch_assoc()) {
 
             <div class="field-group">
                 <label for="telefon">Telefon</label>
-                <input type="text" name="telefon" id="telefon" placeholder="F.eks. 12345678" pattern="[0-9]{8}" maxlength="8" minlength="8" inputmode="numeric" required>
+                <input
+                    type="tel"
+                    name="telefon"
+                    id="telefon"
+                    placeholder="F.eks. 12345678"
+                    pattern="[0-9]{8}"
+                    maxlength="8"
+                    minlength="8"
+                    inputmode="numeric"
+                    required
+                    title="Telefonnummer må være 8 sifre, kun tall"
+                >
             </div>
 
             <div class="field-group">
