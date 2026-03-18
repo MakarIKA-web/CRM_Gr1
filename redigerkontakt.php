@@ -7,6 +7,16 @@ if (!isset($_SESSION['ansatt_id'])) {
     exit;
 }
 
+// Hent alle kunder for dropdown
+$kundeliste = []; // liste for å holde kunder
+$sqlAllKunder = "SELECT kunde_id, firmanavn FROM kunder";
+$resultAllKunder = $conn->query($sqlAllKunder); // putter resultatet i en variabel
+
+// Legger alle kunder i en array
+while ($k = $resultAllKunder->fetch_assoc()) {
+    $kundeliste[] = $k;
+}
+
 // Sjekk om kontaktperson-ID er satt
 if (!isset($_GET['id'])) {
     die("Ingen kontaktperson valgt.");
@@ -71,6 +81,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="form-card">
         <form method="post">
+
+            <div class="field-group">
+                <label for="kunde_id">Firmanavn</label>
+                <select name="kunde_id" id="kunde_id" required>
+                    <!-- her legger vi til alternativene for kundene -->
+                    <option value="">Velg firma</option> <!-- en tom option for å tvinge brukeren til å velge -->
+
+                    <!-- her er en funskjon som henter kunder fra kundearray og legger dem til i dropdownen -->
+                    <?php foreach ($kundeliste as $kunde): ?>
+                        <!-- hver kunde får et opton som inneholder firmanavn og kunde_id og skal kunne velges av brukeren -->
+                        <option value="<?php echo $kunde['kunde_id']; ?>">
+                            <?php echo htmlspecialchars($kunde['firmanavn']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
             <div class="field-group">
                 <label for="fornavn">Fornavn</label>
