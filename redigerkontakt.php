@@ -22,6 +22,7 @@ if (!isset($_GET['id'])) {
     die("Ingen kontaktperson valgt.");
 }
 
+// Hent kontaktperson-ID fra URL og sørg for at det er et tall
 $kontakt_id = intval($_GET['id']);
 
 // Hent kontaktpersoninformasjon
@@ -29,22 +30,23 @@ $sqlKontakt = "SELECT kp.*, k.firmanavn
                FROM kontaktpersoner kp
                JOIN kunder k ON kp.kunde_id = k.kunde_id
                WHERE kp.kontakt_id = $kontakt_id";
-$resultKontakt = $conn->query($sqlKontakt);
+$resultKontakt = $conn->query($sqlKontakt); // putter resultatet i en variabel
 
-if ($resultKontakt->num_rows == 0) {
-    die("Kontaktperson ikke funnet.");
+if ($resultKontakt->num_rows == 0) { // Hvis ingen kontaktperson finnes med denne ID-en
+    die("Kontaktperson ikke funnet."); // stopper skriptet og viser en melding
 }
 
-$kontakt = $resultKontakt->fetch_assoc();
+$kontakt = $resultKontakt->fetch_assoc(); // henter kontakt
 
 // Behandle oppdatering når skjema sendes
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fn = $conn->real_escape_string($_POST['fornavn']);
-    $en = $conn->real_escape_string($_POST['etternavn']);
-    $ep = $conn->real_escape_string($_POST['epost']);
-    $tel = $conn->real_escape_string($_POST['telefon']);
-    $st = $conn->real_escape_string($_POST['stilling']);
+    $fn = $conn->real_escape_string($_POST['fornavn']); // tar fornavn fra skjemaet og gjør det trygt for SQL
+    $en = $conn->real_escape_string($_POST['etternavn']); // tar etternavn fra skjemaet og gjør det trygt for SQL
+    $ep = $conn->real_escape_string($_POST['epost']); // tar epost fra skjemaet og gjør det trygt for SQL
+    $tel = $conn->real_escape_string($_POST['telefon']); // tar telefon fra skjemaet og gjør det trygt for SQL
+    $st = $conn->real_escape_string($_POST['stilling']); // tar stilling fra skjemaet og gjør det trygt for SQL
 
+    // Oppdater kontaktperson i databasen
     $sqlUpdate = "UPDATE kontaktpersoner SET
                     fornavn='$fn',
                     etternavn='$en',
@@ -53,10 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     stilling='$st'
                   WHERE kontakt_id=$kontakt_id";
 
+    // Hvis oppdateringen er vellykket, gå tilbake til oversikten
     if ($conn->query($sqlUpdate)) {
         // Etter oppdatering
         header("Location: index.php"); // går tilbake til oversikten
         exit;
+    // Hvis det oppstår en feil, vis en feilmelding
     } else {
         $error = "Kunne ikke oppdatere kontaktperson: " . $conn->error;
     }
