@@ -2,6 +2,12 @@
 session_start();
 require_once "config.php";
 
+// Sjekk om bruker er logget inn
+if (isset($_SESSION['ansatt_id'])) {
+    header("Location: index.php");
+    exit;
+}
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

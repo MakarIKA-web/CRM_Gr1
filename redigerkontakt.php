@@ -1,6 +1,12 @@
 <?php
 require_once "config.php";
 
+session_start();
+if (!isset($_SESSION['ansatt_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
 // Sjekk om kontaktperson-ID er satt
 if (!isset($_GET['id'])) {
     die("Ingen kontaktperson valgt.");
@@ -9,7 +15,7 @@ if (!isset($_GET['id'])) {
 $kontakt_id = intval($_GET['id']);
 
 // Hent kontaktpersoninformasjon
-$sqlKontakt = "SELECT kp.*, k.firmanavn 
+$sqlKontakt = "SELECT kp.*, k.firmanavn
                FROM kontaktpersoner kp
                JOIN kunder k ON kp.kunde_id = k.kunde_id
                WHERE kp.kontakt_id = $kontakt_id";
@@ -29,12 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tel = $conn->real_escape_string($_POST['telefon']);
     $st = $conn->real_escape_string($_POST['stilling']);
 
-    $sqlUpdate = "UPDATE kontaktpersoner SET 
-                    fornavn='$fn', 
-                    etternavn='$en', 
-                    epost='$ep', 
-                    telefon='$tel', 
-                    stilling='$st' 
+    $sqlUpdate = "UPDATE kontaktpersoner SET
+                    fornavn='$fn',
+                    etternavn='$en',
+                    epost='$ep',
+                    telefon='$tel',
+                    stilling='$st'
                   WHERE kontakt_id=$kontakt_id";
 
     if ($conn->query($sqlUpdate)) {

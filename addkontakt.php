@@ -8,6 +8,12 @@ $resultAllKunder = $conn->query($sqlAllKunder);
 while ($k = $resultAllKunder->fetch_assoc()) {
     $kundeliste[] = $k;
 }
+
+session_start();
+if (!isset($_SESSION['ansatt_id'])) {
+    header("Location: login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

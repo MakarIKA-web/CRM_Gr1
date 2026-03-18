@@ -2,6 +2,12 @@
 require_once "config.php";
 
 $orgnr_error = $_GET['orgnr_error'] ?? '';
+
+session_start();
+if (!isset($_SESSION['ansatt_id'])) {
+    header("Location: login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

@@ -1,6 +1,12 @@
 <?php
 require_once "config.php";
 
+session_start();
+if (!isset($_SESSION['ansatt_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
 // Sjekk om kunde-ID er satt
 if (!isset($_GET['id'])) {
     die("Ingen kunde valgt.");
