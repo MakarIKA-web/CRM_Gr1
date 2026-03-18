@@ -271,6 +271,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${fornavn} ${etternavn}`.trim();
     }
 
+    const postnummerInput = document.getElementById('postnummer');
+    const poststedInput = document.getElementById('poststed');
+
+    postnummerInput.addEventListener('input', () => {
+        const pn = postnummerInput.value.trim();
+        if (pn.length === 4) { // typisk norsk postnummer har 4 sifre
+            fetch(`get_poststed.php?postnummer=${pn}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.poststed) {
+                        poststedInput.value = data.poststed;
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    });
+
     function updateFirmanavn() {
         if (kundetypeSelect.value === 'privat') {
             firmanavnInput.value = getFirstKontaktNavn();
