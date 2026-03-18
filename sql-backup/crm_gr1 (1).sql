@@ -57,8 +57,16 @@ CREATE TABLE `ansatte` (
   `etternavn` varchar(100) NOT NULL,
   `epost` varchar(100) DEFAULT NULL,
   `rolle` enum('admin','selger','support') DEFAULT 'selger',
-  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp()
+  `opprettet_dato` timestamp NOT NULL DEFAULT current_timestamp(),
+  `github_id` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ansatte`
+--
+
+INSERT INTO `ansatte` (`ansatt_id`, `brukernavn`, `passord_hash`, `fornavn`, `etternavn`, `epost`, `rolle`, `opprettet_dato`, `github_id`) VALUES
+(1, 'makar', '$2y$10$PRtxFgEw4z0d08/wd/lFxenEoajxEMrr.tyx8OvGaSe6DzQ8S0HVK', 'makar', 'hrydkovets', 'makar@admin.no', 'admin', '2026-03-18 08:49:50', NULL);
 
 -- --------------------------------------------------------
 
