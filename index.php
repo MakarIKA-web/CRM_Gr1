@@ -1,5 +1,12 @@
 <?php
+session_start();
 require_once "config.php";
+
+// Redirect to login if not logged in
+if (!isset($_SESSION['ansatt_id'])) {
+    header("Location: login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -55,9 +62,9 @@ require_once "config.php";
 
                             // --- Hent poststed fra postnumre/steder ---
                             $postQuery = $conn->query("
-                                SELECT s.poststed 
-                                FROM postnumre p, steder s 
-                                WHERE p.postnummer = '" . $conn->real_escape_string($postnummerText) . "' 
+                                SELECT s.poststed
+                                FROM postnumre p, steder s
+                                WHERE p.postnummer = '" . $conn->real_escape_string($postnummerText) . "'
                                 AND p.sted_id = s.sted_id
                             ");
                             if ($postQuery && $postRow = $postQuery->fetch_assoc()) {
@@ -205,7 +212,7 @@ require_once "config.php";
                         $orgnr = $kundeInfo['organisasjonsnummer'];
                         $kundetype = $kundeInfo['kundetype']; // du må hente denne fra kunder-tabellen
 
-                        echo "<tr 
+                        echo "<tr
                                 data-type='" . htmlspecialchars($row["stilling"], ENT_QUOTES) . "'
                                 data-kundetype='" . htmlspecialchars($kundetype, ENT_QUOTES) . "'>
                                 <td>" . htmlspecialchars($row["kontakt_id"]) . "</td>
@@ -248,7 +255,7 @@ require_once "config.php";
     </main>
 
 
-    <script> 
+    <script>
         const connectionInfo = {
             host: "<?php echo $conn->host_info; ?>",
             server: "<?php echo $conn->server_info; ?>",
