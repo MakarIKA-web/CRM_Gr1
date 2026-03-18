@@ -23,9 +23,9 @@ $result = $conn->query($sql);
 
 // Hvis vi finner et resultat, returnerer vi poststedet som JSON. Hvis ikke, returnerer vi en tom poststed.
 if ($result && $result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    echo json_encode(['poststed' => $row['poststed']]);
+    $row = $result->fetch_assoc(); // Vi henter raden som inneholder poststedet
+    echo json_encode(['poststed' => $row['poststed']]); // Vi returnerer poststedet i et JSON-format som kan brukes av JavaScript på klientsiden
 } else {
-    echo json_encode(['poststed' => '']);
+    echo json_encode(['poststed' => '']); // Hvis ingen postnummer ble funnet, returnerer vi en tom poststed
 }
 ?>
