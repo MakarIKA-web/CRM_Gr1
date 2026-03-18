@@ -8,32 +8,37 @@ if (isset($_SESSION['ansatt_id'])) {
     exit;
 }
 
+// Håndter innloggingsforsøk
 $error = '';
 
+// når skjemaet sendes, henter vi brukernavn og passord, og sjekker mot databasen
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // henter og saniterer input, trim brukes for å fjerne unødvendige mellomrom
     $brukernavn = trim($_POST['brukernavn']);
     $passord = $_POST['passord'];
 
     // Hent bruker fra databasen
-    $stmt = $conn->prepare("SELECT ansatt_id, brukernavn, passord_hash, rolle FROM ansatte WHERE brukernavn=? LIMIT 1");
-    $stmt->bind_param("s", $brukernavn);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt = $conn->prepare("SELECT ansatt_id, brukernavn, passord_hash, rolle FROM ansatte WHERE brukernavn=? LIMIT 1"); // limiterer til 1 for sikkerhet
+    $stmt->bind_param("s", $brukernavn); // binder parameter for å forhindre SQL-injeksjon
+    $stmt->execute(); // utfører spørringen
+    $result = $stmt->get_result(); // henter resultatet
 
+    // resultatet skal være 1 rad hvis brukernavn finnes, og vi sjekker passordet med password_verify
     if ($result->num_rows === 1) {
-        $ansatt = $result->fetch_assoc();
-        if (password_verify($passord, $ansatt['passord_hash'])) {
+        $ansatt = $result->fetch_assoc(); // henter raden som en assosiativ array
+        if (password_verify($passord, $ansatt['passord_hash'])) { // sjekker passordet mot hash i databasen
             // Logg inn brukeren
-            $_SESSION['ansatt_id'] = $ansatt['ansatt_id'];
-            $_SESSION['brukernavn'] = $ansatt['brukernavn'];
-            $_SESSION['rolle'] = $ansatt['rolle'];
+            $_SESSION['ansatt_id'] = $ansatt['ansatt_id']; // lagrer ansatt_id i session for å holde brukeren logget inn
+            $_SESSION['brukernavn'] = $ansatt['brukernavn']; // lagrer brukernavn i session for enkel tilgang
+            $_SESSION['rolle'] = $ansatt['rolle']; // lagrer rolle i session for tilgangskontroll
 
-            header("Location: index.php");
-            exit;
-        } else {
+            header("Location: index.php"); // sender brukeren til index.php etter vellykket innlogging
+            exit; // stopper videre utførelse av scriptet
+        } else { // hvis passordet ikke stemmer, vis en feilmelding
             $error = "Feil passord!";
         }
-    } else {
+    } else { // hvis brukernavn ikke finnes, vis en feilmelding
         $error = "Brukernavn finnes ikke!";
     }
 }

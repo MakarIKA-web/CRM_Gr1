@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 1️⃣ Hent eller opprett poststed
     $stmt = $conn->prepare("SELECT sted_id FROM steder WHERE poststed = ?");
     $stmt->bind_param("s", $poststed);
-    $stmt->execute();
+    $stmt->execute(); // utfører spørringen
     $stmt->store_result();
     $stmt->bind_result($sted_id);
 
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 2️⃣ Hent eller opprett postnummer
     $stmt = $conn->prepare("SELECT postnummer FROM postnumre WHERE postnummer = ?");
     $stmt->bind_param("s", $postnummer);
-    $stmt->execute();
+    $stmt->execute(); // utfører spørringen
     $stmt->store_result();
     if ($stmt->num_rows == 0) {
         $stmtInsert = $conn->prepare("INSERT INTO postnumre (postnummer, sted_id) VALUES (?, ?)");
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 3️⃣ Hent eller opprett adresse
     $stmt = $conn->prepare("SELECT adresse_id FROM adresser WHERE gate = ? AND postnummer = ?");
     $stmt->bind_param("ss", $gate, $postnummer);
-    $stmt->execute();
+    $stmt->execute(); // utfører spørringen
     $stmt->bind_result($adresse_id);
     if (!$stmt->fetch()) {
         $stmtInsert = $conn->prepare("INSERT INTO adresser (gate, postnummer) VALUES (?, ?)");
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 4️⃣ Oppdater kunden
     $stmt = $conn->prepare("UPDATE kunder SET firmanavn=?, kundetype=?, organisasjonsnummer=?, adresse_id=? WHERE kunde_id=?");
     $stmt->bind_param("sssii", $firmanavn, $kundetype, $orgnr, $adresse_id, $kunde_id);
-    $stmt->execute();
+    $stmt->execute(); // utfører spørringen
     $stmt->close();
 
     // 5️⃣ Oppdater kontaktpersoner
