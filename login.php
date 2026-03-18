@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="no">
+<html lang="no" >
 <head>
 <meta charset="UTF-8">
 <title>Logg inn</title>
