@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postnummer= $_POST['postnummer'];
     $poststed  = $_POST['poststed'];
 
-    // 1️⃣ Hent eller opprett poststed
+    
     $stmt = $conn->prepare("SELECT sted_id FROM steder WHERE poststed = ?");
     $stmt->bind_param("s", $poststed);
     $stmt->execute(); // utfører spørringen
@@ -57,12 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmtInsert = $conn->prepare("INSERT INTO steder (poststed) VALUES (?)");
         $stmtInsert->bind_param("s", $poststed);
         $stmtInsert->execute();
-        $sted_id = $stmtInsert->insert_id; // ⚠️ viktig at vi setter sted_id her
+        $sted_id = $stmtInsert->insert_id; 
         $stmtInsert->close();
     }
     $stmt->close();
 
-    // 2️⃣ Hent eller opprett postnummer
+    
     $stmt = $conn->prepare("SELECT postnummer FROM postnumre WHERE postnummer = ?");
     $stmt->bind_param("s", $postnummer);
     $stmt->execute(); // utfører spørringen
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmt->close();
 
-    // 3️⃣ Hent eller opprett adresse
+ 
     $stmt = $conn->prepare("SELECT adresse_id FROM adresser WHERE gate = ? AND postnummer = ?");
     $stmt->bind_param("ss", $gate, $postnummer);
     $stmt->execute(); // utfører spørringen
@@ -89,13 +89,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $stmt->close();
 
-    // 4️⃣ Oppdater kunden
+
     $stmt = $conn->prepare("UPDATE kunder SET firmanavn=?, kundetype=?, organisasjonsnummer=?, adresse_id=? WHERE kunde_id=?");
     $stmt->bind_param("sssii", $firmanavn, $kundetype, $orgnr, $adresse_id, $kunde_id);
     $stmt->execute(); // utfører spørringen
     $stmt->close();
 
-    // 5️⃣ Oppdater kontaktpersoner
+
     $kontakt_ids = $_POST['kontakt_id'] ?? [];
     $fornavn = $_POST['kontaktperson_fornavn'] ?? [];
     $etternavn = $_POST['kontaktperson_etternavn'] ?? [];
@@ -152,6 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="form-page">
 <main>
+
     <section class="form-hero">
         <h1>Rediger kunde</h1>
         <p>Rediger informasjon om kunden</p>

@@ -18,6 +18,11 @@ if (!isset($_SESSION['ansatt_id'])) {
     <link rel="stylesheet" href="src/css/styl.css">
 </head>
 <body>
+    <!-- dark / light mode switch -->
+        
+    <button class="theme-toggle" onclick="toggleTheme()">Tema</button>
+    
+
     <!-- Kunder -->
     <main>
         <h2>Kunder</h2>
@@ -394,6 +399,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+</script>
+
+<script>
+    // Sett tema ved sideload
+    if (localStorage.getItem('tema') === 'light') {
+        document.body.classList.add('light');
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light');
+        localStorage.setItem('tema', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
 </script>
 
 </body>

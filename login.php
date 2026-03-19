@@ -45,22 +45,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="no" >
+<html lang="no">
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="../CRM_Gr1/src/css/styll.css">
 <title>Logg inn</title>
 </head>
 <body>
-<h2>Logg inn</h2>
-<form method="post">
-    <input type="text" name="brukernavn" placeholder="Brukernavn" required>
-    <input type="password" name="passord" placeholder="Passord" required>
-    <button type="submit">Logg inn</button>
-</form>
-<?php if ($error) echo "<p style='color:red;'>$error</p>"; ?>
+
+<button class="theme-toggle" onclick="toggleTheme()">Tema</button>
+
+<div class="form-card">
+    <h2>Logg inn</h2>
+    <form method="post">
+        <div class="field-group">
+            <label>Brukernavn</label>
+            <input type="text" name="brukernavn" placeholder="Brukernavn" required>
+        </div>
+        <div class="field-group">
+            <label>Passord</label>
+            <input type="password" name="passord" placeholder="Passord" required>
+        </div>
+       <button type="submit" class="submit-btn">Logg inn</button>
+    </form>
+    <?php if ($error) echo "<p style='color:red;'>$error</p>"; ?>
+</div>
+
 <script>
-    console.log("Om du ikke vet bruker og passord, prøv å bruker admin som brukernavn og admin123 som passord.");
+    if (localStorage.getItem('tema') === 'light') document.body.classList.add('light');
+    function toggleTheme() {
+        document.body.classList.toggle('light');
+        localStorage.setItem('tema', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
 </script>
 </body>
 </html>

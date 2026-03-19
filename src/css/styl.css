@@ -12,10 +12,18 @@
     --e:.18s cubic-bezier(.4,0,.2,1);
 }
 
+/* ── Light mode ── */
+body.light {
+    --bg0:#f4f4f6; --bg1:#ffffff; --bg2:#ebebef; --bg3:#e2e2e8;
+    --b:rgba(0,0,0,.08); --bf:rgba(0,0,0,.18);
+    --t0:#0d0d0f; --t1:#55556a; --t2:#222230;
+    --sh:0 2px 20px rgba(0,0,0,.08),0 0 0 1px var(--b);
+}
+
 /* ── Reset & Base ── */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 html { font-size:15px; scroll-behavior:smooth; }
-body { background:var(--bg0); color:var(--t0); font-family:var(--fx); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; }
+body { background:var(--bg0); color:var(--t0); font-family:var(--fx); line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; transition:background var(--e),color var(--e); }
 a { color:inherit; text-decoration:none; }
 @keyframes up { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
 
@@ -99,6 +107,21 @@ button[onclick*="slette"]:hover { background:rgba(248,113,113,.14); border-color
 button[name^="Save"]       { color:var(--grn); border-color:rgba(52,211,153,.25); background:rgba(52,211,153,.08); }
 button[name^="Save"]:hover { background:rgba(52,211,153,.16); border-color:rgba(52,211,153,.5); box-shadow:0 0 12px rgba(52,211,153,.2); }
 
+/* ── Theme toggle ── */
+.theme-toggle {
+    position:fixed; top:16px; right:16px;
+    display:inline-flex; align-items:center; gap:6px;
+    padding:6px 12px;
+    background:var(--bg2); border:1px solid var(--b); border-radius:var(--r1);
+    color:var(--t1); font-family:var(--fx); font-size:.72rem; font-weight:500;
+    cursor:pointer; transition:all var(--e);
+    box-shadow:0 2px 8px rgba(0,0,0,.3);
+    z-index:100;
+}
+.theme-toggle:hover { background:var(--bg3); color:var(--t0); border-color:var(--bf); transform:translateY(-1px); }
+.theme-toggle::before { content:'☀️'; font-size:.8rem; }
+body.light .theme-toggle::before { content:'🌙'; }
+
 /* ── Article ── */
 article {
     display: flex;
@@ -172,12 +195,3 @@ body.form-page main { max-width:720px; gap:24px; padding-top:48px; }
 .back-link::before { content:'←'; }
 .back-link:hover { color:var(--t0); }
 
-/* ── Responsive ── */
-@media (max-width:900px) {
-    main { padding:20px 12px 48px; }
-    .controls { flex-wrap:wrap; }
-    .controls input, .controls select { min-width:140px; }
-    table { display:block; overflow-x:auto; }
-    th, td { padding:11px 12px; }
-    .form-card, .kontaktperson { padding:16px; }
-}

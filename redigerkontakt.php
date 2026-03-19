@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="form-page">
 <main>
+    
     <section class="form-hero">
         <h1>Rediger kontaktperson for <?php echo htmlspecialchars($kontakt['firmanavn']); ?></h1>
         <p>Oppdater informasjonen for denne kontaktpersonen</p>
