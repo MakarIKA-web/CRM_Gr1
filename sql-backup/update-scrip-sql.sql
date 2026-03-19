@@ -165,6 +165,8 @@ ALTER TABLE `postnumre`
 
 ALTER TABLE ansatte ADD COLUMN github_id VARCHAR(100) DEFAULT NULL;
 
+INSERT INTO `ansatte` (`ansatt_id`, `brukernavn`, `passord_hash`, `fornavn`, `etternavn`, `epost`, `rolle`, `opprettet_dato`, `github_id`) VALUES ('1', 'admin', '$2y$10$SntznuUlgAi9b7cSm.SXHeeJxS2DuiHL3YdB.QD1.H2L/8igFp7pa', '', '', 'admin@epost.no', 'admin', current_timestamp(), NULL)
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
