@@ -86,7 +86,7 @@ if (!isset($_SESSION['ansatt_id'])) {
                                     <td><input type='text' name='adresse' value='" . htmlspecialchars($adresseText, ENT_QUOTES) . "' required></td>
                                     <td>" . htmlspecialchars($postnummerText) . "</td>
                                     <td>" . htmlspecialchars($poststedText) . "</td>
-                                    <td>" . htmlspecialchars($row["opprettet_dato"]) . "</td>
+                                    <td>" . htmlspecialchars(date("Y-m-d", strtotime($row["opprettet_dato"]))) . "</td>
                                     <td>
                                         <a href='index.php'><button type='button'>Avbryt</button></a>
                                     </td>
@@ -104,7 +104,7 @@ if (!isset($_SESSION['ansatt_id'])) {
                                 <td>" . htmlspecialchars($adresseText) . "</td>
                                 <td>" . htmlspecialchars($postnummerText) . "</td>
                                 <td>" . htmlspecialchars($poststedText) . "</td>
-                                <td>" . htmlspecialchars($row["opprettet_dato"]) . "</td>
+                                <td>" . htmlspecialchars(date("Y-m-d", strtotime($row["opprettet_dato"]))) . "</td>
                                 <td>
                                     <form method='GET' action='delete.php'>
                                         <input type='hidden' name='id' value='" . $row['kunde_id'] . "'>
@@ -222,7 +222,7 @@ if (!isset($_SESSION['ansatt_id'])) {
                                 <td>" . htmlspecialchars($row["etternavn"]) . "</td>
                                 <td>" . htmlspecialchars($row["epost"]) . "</td>
                                 <td>" . htmlspecialchars($row["stilling"] ?? '') . "</td>
-                                <td>" . htmlspecialchars($row["opprettet_dato"]) . "</td>
+                                <td>" . htmlspecialchars(date("Y-m-d", strtotime($row["opprettet_dato"]))) . "</td>
                                 <td>
                                     <form method='GET' action='delete.php'>
                                         <input type='hidden' name='kontakt_id' value='" . $row['kontakt_id'] . "'>
