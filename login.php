@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="no" >
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="../CRM_Gr1/src/css/styll.css">
+<link rel="stylesheet" href="src/css/login.css">
 <title>Logg inn</title>
 </head>
 <body>
