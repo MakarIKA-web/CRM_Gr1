@@ -58,5 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Logg inn</button>
 </form>
 <?php if ($error) echo "<p style='color:red;'>$error</p>"; ?>
+<script>
+    console.log("Om du ikke vet bruker og passord, prøv å bruker admin som brukernavn og $2y$10$SntznuUlgAi9b7cSm.SXHeeJxS2DuiHL3YdB.QD1.H2L/8igFp7pa som passord.");
+</script>
 </body>
 </html>
