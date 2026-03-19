@@ -40,6 +40,7 @@ $kontakt = $resultKontakt->fetch_assoc(); // henter kontakt
 
 // Behandle oppdatering når skjema sendes
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $kunde_id = intval($_POST['kunde_id']);
     $fn = $conn->real_escape_string($_POST['fornavn']); // tar fornavn fra skjemaet og gjør det trygt for SQL
     $en = $conn->real_escape_string($_POST['etternavn']); // tar etternavn fra skjemaet og gjør det trygt for SQL
     $ep = $conn->real_escape_string($_POST['epost']); // tar epost fra skjemaet og gjør det trygt for SQL
@@ -48,12 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Oppdater kontaktperson i databasen
     $sqlUpdate = "UPDATE kontaktpersoner SET
-                    fornavn='$fn',
-                    etternavn='$en',
-                    epost='$ep',
-                    telefon='$tel',
-                    stilling='$st'
-                  WHERE kontakt_id=$kontakt_id";
+                kunde_id=$kunde_id,
+                fornavn='$fn',
+                etternavn='$en',
+                epost='$ep',
+                telefon='$tel',
+                stilling='$st'
+              WHERE kontakt_id=$kontakt_id";
 
     // Hvis oppdateringen er vellykket, gå tilbake til oversikten
     if ($conn->query($sqlUpdate)) {
@@ -78,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="form-page">
 <main>
     <section class="form-hero">
-        <h1>Rediger kontaktperson for <?php echo htmlspecialchars($kontakt['firmanavn']); ?></h1>
+        <h1>Rediger kontaktinformasjon for <?php echo htmlspecialchars($kontakt['fornavn'] . " " . $kontakt['etternavn']); ?></h1>
         <p>Oppdater informasjonen for denne kontaktpersonen</p>
         <?php if(isset($error)) echo "<p style='color:red;'>$error</p>"; ?>
     </section>
@@ -95,7 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- her er en funskjon som henter kunder fra kundearray og legger dem til i dropdownen -->
                     <?php foreach ($kundeliste as $kunde): ?>
                         <!-- hver kunde får et opton som inneholder firmanavn og kunde_id og skal kunne velges av brukeren -->
-                        <option value="<?php echo $kunde['kunde_id']; ?>">
+                        <option value="<?php echo $kunde['kunde_id']; ?>"
+                            <?php if ($kunde['kunde_id'] == $kontakt['kunde_id']) echo 'selected'; ?>>
                             <?php echo htmlspecialchars($kunde['firmanavn']); ?>
                         </option>
                     <?php endforeach; ?>
