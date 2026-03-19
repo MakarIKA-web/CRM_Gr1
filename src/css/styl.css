@@ -181,3 +181,7 @@ body.form-page main { max-width:720px; gap:24px; padding-top:48px; }
     th, td { padding:11px 12px; }
     .form-card, .kontaktperson { padding:16px; }
 }
+
+.kunder-style {
+    width: 200px;
+}

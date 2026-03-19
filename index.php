@@ -20,7 +20,12 @@ if (!isset($_SESSION['ansatt_id'])) {
 <body>
     <!-- Kunder -->
     <main>
-        <h2>Kunder</h2>
+        <div style="display: inline-flex; justify-content: space-between;">
+            <h2 style="text-align:left; margin:0px; max-width:200px;">Kunder</h2>
+            <form action="logout.php" method="post" style="text-align:right; margin:10px; max-width:200px;">
+                <button type="submit">Logg ut</button>
+            </form>
+        </div>
         <p>Oversikt over alle kunder</p>
 
         <div class="controls" style="text-align:center; margin-bottom:10px;">
