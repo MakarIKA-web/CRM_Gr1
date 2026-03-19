@@ -18,6 +18,11 @@ if (!isset($_SESSION['ansatt_id'])) {
     <link rel="stylesheet" href="src/css/styl.css">
 </head>
 <body>
+    <!-- dark / light mode switch -->
+        
+    <button class="theme-toggle" onclick="toggleTheme()">Tema</button>
+    
+
     <!-- Kunder -->
     <main>
         <div style="display: inline-flex; justify-content: space-between;">
@@ -399,6 +404,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.querySelectorAll('#kontaktpersonTable tr[data-kundetype]');
+
+    rows.forEach(row => {
+        const kundetype = (row.dataset.kundetype || "").toLowerCase();
+
+        // Organisasjonsnummer = kolonne index 2
+        const orgTd = row.querySelectorAll('td')[2];
+
+        if (kundetype === 'privat') {
+            orgTd.textContent = 'Privatperson';
+        }
+    });
+});
+</script>
+
+<script>
+    // Sett tema ved sideload
+    if (localStorage.getItem('tema') === 'light') {
+        document.body.classList.add('light');
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light');
+        localStorage.setItem('tema', document.body.classList.contains('light') ? 'light' : 'dark');
+    }
 </script>
 
 </body>
