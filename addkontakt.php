@@ -24,7 +24,7 @@ if (!isset($_SESSION['ansatt_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="src/css/styl.css">
+    <link rel="stylesheet" href="src/css/style.css">
     <title>Ny Kontaktperson</title>
 </head>
 <body class="form-page">
@@ -110,6 +110,29 @@ if (!isset($_SESSION['ansatt_id'])) {
     <a href="index.php" class="back-link">Tilbake til oversikten</a>
 
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const html = document.documentElement;
+    const savedTheme = localStorage.getItem('tema');
+    if (savedTheme) {
+        html.classList.remove('light', 'dark');
+        html.classList.add(savedTheme);
+    } else {
+        html.classList.add('dark'); // default tema
+    }
+
+    const btn = document.getElementById('toggleThemeBtn');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            const newTheme = html.classList.contains('light') ? 'dark' : 'light';
+            html.classList.remove('light', 'dark');
+            html.classList.add(newTheme);
+            localStorage.setItem('tema', newTheme);
+        });
+    }
+});
+</script>
 
 </body>
 </html>

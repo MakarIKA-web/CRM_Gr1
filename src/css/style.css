@@ -185,3 +185,53 @@ body.form-page main { max-width:720px; gap:24px; padding-top:48px; }
 .kunder-style {
     width: 200px;
 }
+
+
+
+
+
+body {
+    transition: background .25s ease, color .25s ease;
+}
+
+table, button, input, select {
+    transition: background .25s ease, color .25s ease, border-color .25s ease;
+}
+
+/* ── Light Theme ── */
+:root.light {
+    --bg0:#f6f7fb;
+    --bg1:#ffffff;
+    --bg2:#f1f3f7;
+    --bg3:#e7eaf1;
+
+    --b:rgba(0,0,0,.08);
+    --bf:rgba(0,0,0,.18);
+
+    --t0:#1a1a1e;
+    --t1:#4a4a5a;
+    --t2:#2a2a38;
+
+    --pur:#7c5cff;
+    --grn:#10b981;
+    --red:#ef4444;
+
+    --sh:0 2px 12px rgba(0,0,0,.08),0 0 0 1px var(--b);
+}
+
+:root.dark {
+    --bg0:#0d0d0f;
+    --bg1:#141416;
+    --bg2:#1a1a1e;
+    --bg3:#1f1f24;
+    --b:rgba(255,255,255,.07);
+    --bf:rgba(255,255,255,.18);
+    --t0:#f0f0f2;
+    --t1:#8a8a9a;
+    --t2:#efefef;
+    --pur:#a78bfa;
+    --grn:#34d399;
+    --red:#f87171;
+    --r1:6px; --r2:10px; --r3:14px; --r4:20px;
+    --sh:0 2px 20px rgba(0,0,0,.5),0 0 0 1px var(--b);
+}

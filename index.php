@@ -15,7 +15,7 @@ if (!isset($_SESSION['ansatt_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
-    <link rel="stylesheet" href="src/css/styl.css">
+    <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
 
@@ -26,7 +26,7 @@ if (!isset($_SESSION['ansatt_id'])) {
             <div style="display: inline-flex; justify-content: space-between; gap: 10px;">
                 <!-- dark / light mode switch -->
         
-                <button onclick="toggleTheme()">Tema</button>
+                <button id="toggleThemeBtn">Tema</button>
                 <form action="logout.php" method="post" style="text-align:right; margin:0px; max-width:200px;">
                     <button type="submit">Logg ut</button>
                 </form>
@@ -371,70 +371,69 @@ if (!isset($_SESSION['ansatt_id'])) {
         typeFilter.addEventListener("change", filterRows);
 
     })();
-</script>
+    </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Hent alle rader med data-type
-    const rows = document.querySelectorAll('tr[data-type]');
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Hent alle rader med data-type
+        const rows = document.querySelectorAll('tr[data-type]');
 
-    rows.forEach(row => {
-        const type = row.getAttribute('data-type');
+        rows.forEach(row => {
+            const type = row.getAttribute('data-type');
 
-        // Finn den 4. <td> (indeks 3)
-        const td = row.querySelectorAll('td')[3];
-        if (type === 'privat') {
-            td.textContent = 'Privatperson';
-        }
+            // Finn den 4. <td> (indeks 3)
+            const td = row.querySelectorAll('td')[3];
+            if (type === 'privat') {
+                td.textContent = 'Privatperson';
+            }
+        });
     });
-});
-</script>
+    </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const rows = document.querySelectorAll('#kontaktpersonTable tr[data-kundetype]');
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const rows = document.querySelectorAll('#kontaktpersonTable tr[data-kundetype]');
 
-    rows.forEach(row => {
-        const kundetype = (row.dataset.kundetype || "").toLowerCase();
+        rows.forEach(row => {
+            const kundetype = (row.dataset.kundetype || "").toLowerCase();
 
-        // Organisasjonsnummer = kolonne index 2
-        const orgTd = row.querySelectorAll('td')[2];
+            // Organisasjonsnummer = kolonne index 2
+            const orgTd = row.querySelectorAll('td')[2];
 
-        if (kundetype === 'privat') {
-            orgTd.textContent = 'Privatperson';
-        }
+            if (kundetype === 'privat') {
+                orgTd.textContent = 'Privatperson';
+            }
+        });
     });
-});
-</script>
+    </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const rows = document.querySelectorAll('#kontaktpersonTable tr[data-kundetype]');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const html = document.documentElement;
+        const btn = document.getElementById('toggleThemeBtn');
 
-    rows.forEach(row => {
-        const kundetype = (row.dataset.kundetype || "").toLowerCase();
-
-        // Organisasjonsnummer = kolonne index 2
-        const orgTd = row.querySelectorAll('td')[2];
-
-        if (kundetype === 'privat') {
-            orgTd.textContent = 'Privatperson';
+        // Sett tema fra localStorage
+        const savedTheme = localStorage.getItem('tema');
+        if (savedTheme) {
+            html.classList.remove('light', 'dark'); // fjern alle mulige temaer
+            html.classList.add(savedTheme);
+        } else {
+            html.classList.add('dark'); // default tema
         }
+
+        // Legg til click-event
+        btn.addEventListener('click', () => {
+            if (html.classList.contains('light')) {
+                html.classList.replace('light', 'dark');
+                localStorage.setItem('tema', 'dark');
+            } else {
+                html.classList.replace('dark', 'light');
+                localStorage.setItem('tema', 'light');
+            }
+            console.log("Tema byttet til:", html.classList.contains('light') ? 'light' : 'dark');
+        });
     });
-});
-</script>
-
-<script>
-    // Sett tema ved sideload
-    if (localStorage.getItem('tema') === 'light') {
-        document.body.classList.add('light');
-    }
-
-    function toggleTheme() {
-        document.body.classList.toggle('light');
-        localStorage.setItem('tema', document.body.classList.contains('light') ? 'light' : 'dark');
-    }
-</script>
+    </script>
 
 </body>
 </html>
