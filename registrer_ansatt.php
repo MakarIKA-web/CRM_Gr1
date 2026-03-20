@@ -29,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Sjekk om brukernavn allerede finnes
         $stmt = $conn->prepare("SELECT ansatt_id FROM ansatte WHERE brukernavn=? OR epost=?");
         $stmt->bind_param("ss", $brukernavn, $epost);
-        $stmt->execute(); // utfører spørringen
+        if (!$stmt->execute()) { // utfører spørringen 
+            return "SQL-feil: " . $stmt->error;
+        }
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {

@@ -21,7 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Hent bruker fra databasen
     $stmt = $conn->prepare("SELECT ansatt_id, brukernavn, passord_hash, rolle FROM ansatte WHERE brukernavn=? LIMIT 1"); // limiterer til 1 for sikkerhet
     $stmt->bind_param("s", $brukernavn); // binder parameter for å forhindre SQL-injeksjon
-    $stmt->execute(); // utfører spørringen
+    if (!$stmt->execute()) { // utfører spørringen 
+        return "SQL-feil: " . $stmt->error;
+    }
     $result = $stmt->get_result(); // henter resultatet
 
     // resultatet skal være 1 rad hvis brukernavn finnes, og vi sjekker passordet med password_verify
