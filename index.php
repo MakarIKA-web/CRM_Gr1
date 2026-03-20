@@ -27,7 +27,11 @@ if (!isset($_SESSION['ansatt_id'])) {
                 <!-- dark / light mode switch -->
         
                 <button id="toggleThemeBtn">Tema</button>
-                <button><a href="postnumre.php">Postnumre</a></button>
+                
+                <?php if (isset($_SESSION['rolle']) && $_SESSION['rolle'] !== 'selger'): ?>
+                    <button><a href="postnumre.php">Postnumre</a></button>
+                <?php endif; ?>
+
                 <form action="logout.php" method="post" style="text-align:right; margin:0px; max-width:200px;">
                     <button type="submit">Logg ut</button>
                 </form>
