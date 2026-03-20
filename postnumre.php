@@ -30,8 +30,11 @@ $editing_postnummer = $_GET['edit'] ?? null;
         <h2>Oversikt over postnummer og poststed</h2>
         <p>Søk og rediger postnummer (kun admin/support kan redigere)</p>
 
-        <div style="margin-bottom:10px;">
-            <input type="text" id="searchInput" placeholder="Søk postnummer eller poststed..." />
+        <div class="controls" style="text-align:center; margin-bottom:10px;">
+            <input type="text" id="postSearch" placeholder="Søk postnummer eller poststed...">
+
+            <select id="poststederFilter">
+                <option value="">Alle poststeder</option></select>
         </div>
 
         <table id="postTable" border="1" style="margin:auto;">
@@ -73,18 +76,40 @@ $editing_postnummer = $_GET['edit'] ?? null;
     </main>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
+    (function() {
+        const searchInput = document.getElementById('postSearch');
+        const filterSelect = document.getElementById('poststederFilter');
+
         const rows = Array.from(document.querySelectorAll('#postTable tr')).slice(1);
 
-        searchInput.addEventListener('input', () => {
+        // Fyll filteret med unike poststeder
+        const uniqueSteder = [...new Set(rows.map(r => r.dataset.sted).filter(Boolean))];
+        uniqueSteder.forEach(sted => {
+            const opt = document.createElement('option');
+            opt.value = sted;
+            opt.textContent = sted;
+            filterSelect.appendChild(opt);
+        });
+
+        function filterRows() {
             const query = searchInput.value.toLowerCase().trim();
+            const selectedSted = filterSelect.value;
+
             rows.forEach(row => {
                 const postnummer = row.dataset.post || '';
                 const poststed = row.dataset.sted || '';
-                const match = postnummer.toLowerCase().includes(query) || poststed.toLowerCase().includes(query);
-                row.style.display = match ? '' : 'none';
+
+                const matchesQuery = postnummer.toLowerCase().includes(query) || poststed.toLowerCase().includes(query);
+                const matchesFilter = !selectedSted || poststed === selectedSted;
+
+                row.style.display = (matchesQuery && matchesFilter) ? '' : 'none';
             });
-        });
+        }
+
+        searchInput.addEventListener('input', filterRows);
+        filterSelect.addEventListener('change', filterRows);
+
+    })();
     </script>
 
     <script>
