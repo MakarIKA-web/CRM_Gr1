@@ -18,18 +18,19 @@ if (!isset($_SESSION['ansatt_id'])) {
     <link rel="stylesheet" href="src/css/styl.css">
 </head>
 <body>
-    <!-- dark / light mode switch -->
-        
-    <button class="theme-toggle" onclick="toggleTheme()">Tema</button>
-    
 
     <!-- Kunder -->
     <main>
         <div style="display: inline-flex; justify-content: space-between;">
             <h2 style="text-align:left; margin:0px; max-width:200px;">Kunder</h2>
-            <form action="logout.php" method="post" style="text-align:right; margin:10px; max-width:200px;">
-                <button type="submit">Logg ut</button>
-            </form>
+            <div style="display: inline-flex; justify-content: space-between; gap: 10px;">
+                <!-- dark / light mode switch -->
+        
+                <button onclick="toggleTheme()">Tema</button>
+                <form action="logout.php" method="post" style="text-align:right; margin:0px; max-width:200px;">
+                    <button type="submit">Logg ut</button>
+                </form>
+            </div>
         </div>
         <p>Oversikt over alle kunder</p>
 
