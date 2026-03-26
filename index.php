@@ -16,6 +16,7 @@ if (!isset($_SESSION['ansatt_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <link rel="stylesheet" href="src/css/style.css">
+    <link rel="stylesheet" href="src/css/new-style.css">
 </head>
 <body>
 
@@ -24,6 +25,13 @@ if (!isset($_SESSION['ansatt_id'])) {
         <div style="display: inline-flex; justify-content: space-between;">
             <h2 style="text-align:left; margin:0px; max-width:200px;">Kunder</h2>
             <div style="display: inline-flex; justify-content: space-between; gap: 10px;">
+                <!-- Section til å se hvem som er logget inn -->
+                <div id="loggedInUser">
+                    <?php if (isset($_SESSION['ansatt_id'])): ?>
+                        <p><?php echo htmlspecialchars($_SESSION['brukernavn']); ?></p>
+                    <?php endif; ?>
+                </div>
+
                 <!-- dark / light mode switch -->
         
                 <button id="toggleThemeBtn">Tema</button>
